@@ -1,0 +1,111 @@
+
+# Default profile responsible for setting properties common across
+# all environments.
+spring:
+  #  profiles:
+  #    include:
+  # Profile pull from Maven profile property during the build process.
+  # It's tied to a specific Maven profile that is responsible for loading
+  # the target database dependencies.
+  #- @database.profile@
+  datasource:
+    # Normally we want to connect as a database user, not admin
+    username: ${DB_USER_NAME:tlrluser}
+    password: ${DB_USER_PASSWORD:tlrluser}
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 
+            client-secret: 
+          github:
+            client-id: 
+            client-secret: 
+
+app:
+  kafka:
+    groupId: tlrl
+    bootstrap-servers: localhost:9093
+  solr:
+    baseUrls:
+      - http://localhost:8983/solr/tlrl
+  events:
+    bookmark:
+      archived: bookmark.archived
+      created: bookmark.created
+      deleted: bookmark.deleted
+      indexed: bookmark.indexed
+      updated: bookmark.updated
+
+
+#logging:
+#  level:
+#    org:
+#      springframework: INFO
+#      hibernate: ERROR
+
+---
+# Profile responsible for setting development specific properties.
+spring:
+  profiles: dev
+  datasource:
+    # For development, we connect as an admin user so that we
+    # can create/update the schema.
+    username: ${DB_ADMIN_NAME:tlrladmin}
+    password: ${DB_ADMIN_PASSWORD:tlrladmin}
+    continue-on-error: true
+  jpa:
+    show-sql: true
+
+---
+# Profile is responsible for setting production specific properties.
+spring:
+  profiles: prod
+  datasource:
+    # In production, the `tlrluser` is restricted to schema usage. While in
+    # development, we connect with DB_ADMIN, which gives us full control of
+    # the database, so we can update the schema while developing.
+    username: ${DB_USER_NAME:?}
+    password: ${DB_USER_PASSWORD:?}
+  jpa:
+    show-sql: false
+
+---
+# Profile is responsible for setting the H2 specific JDBC/JPA properties.
+# This should ONLY be run in none production environments.
+spring:
+  profiles: h2
+  datasource:
+    url: jdbc:h2:file:./tmp/${DB_NAME:tlrldb};MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2-dev
+  jpa:
+    hibernate:
+      'ddl-auto': ${DB_DDL_AUTO:update}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+---
+# Profile is responsible for setting the PostgreSQL specific JDBC/JPA
+# properties. It's possible to run this profile in any of the environments
+# (e.g, dev, test, production).
+spring:
+  profiles: postgres
+  datasource:
+    url: jdbc:postgresql://${DB_SERVER_HOSTNAME:localhost}:${DB_SERVER_PORT:5432}/${DB_NAME:tlrldb}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      'ddl-auto': ${DB_DDL_AUTO:none}
+      default_schema: public
+    properties:
+      hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect

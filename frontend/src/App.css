@@ -1,0 +1,62 @@
+/* .App {
+  background-color: antiquewhite;
+}
+
+.bookmark-list-item {
+  padding: 4px 0;
+}
+
+.bookmark {
+  background-color: yellow;
+  padding: 4px 0;
+}
+
+.bookmark .title {
+  padding: 0;
+  margin: .3rem 0;
+}
+
+.title a {
+  color:darkslateblue;
+  text-decoration: none;
+}
+
+.bookmark .url {
+  color: green;
+}
+*/
+/* .bookmark .meta {
+  color: dimgray;
+  font-size: .8rem;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.meta .audit {
+  flex-basis: 99%;
+}
+
+.meta .actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.done-cancel-btns, .edit-btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-self: flex-end;
+}
+.delete-btn {
+  padding-right: 10px;
+  border-right: dashed 1px gray;
+  margin-right: 10px;
+}
+
+
+.editable {
+  background-color:whitesmoke;
+}  */

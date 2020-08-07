@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Too long; read later. Save, search and archive your bookmarks." />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="//unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    html, body {
+      height: 100%;
+    }
+    .md-large {
+      font-size: 2.4rem;
+    }
+  </style>
+</head>
+<body class="bg-near-white avenir">
+<div class="fl w-100 pa0 ma0">
+  <div class="fl w-100 tc orange">
+    <h2><i class="material-icons orange md-large v-mid">bookmark_border</i>TLRL</h2>
+  </div>
+  <div class="fl w-100 mt2 ph3 tc">
+    <h3 class="black-80 fw5 mt1 mb0 pa0" id="title"></h3>
+  </div>
+  <div class="fl w-100 tc">
+    (<span id="url" class=""></span>)
+  </div>
+  <div class="fl f5 w-100 mt3 tc">
+    <div class="fl w-100 tc" id="msg">
+    	<span class="blue">...saving</span>
+   	</div>
+  </div>
+</div>
+<script defer="true">
+  const getEl = (id) => document.getElementById(id);
+  
+  function closeWithMessage(msg) {
+    getEl('msg').innerHTML = msg;
+    setTimeout(() => { window.close() }, 5000);
+  }
+
+  function errorMessage(msg) {
+    getEl('msg').innerHTML = `<span class="red">${msg}</span>`;
+  }
+
+  const params = (window.location.search || '')
+    .slice(1)
+    .split('&')   // tokenize into name=value pairs
+    .filter(s => s.trim())    // skip empty values   
+    .filter(s => s.length)    // skip empty values
+    .reduce((map, s) => {
+      var pair = s.split('=');
+      if (pair.length === 2) { map[decodeURIComponent(pair[0])]=decodeURIComponent(pair[1]); }
+      return map;
+    }, {});
+    
+  if (params['url']) {
+    getEl('url').innerHTML = '<a href="'+ params['url'] +'" class="ma0 pa0">' + params['url'] + '</a>';
+  }
+  if (params['title']) {
+    getEl('title').innerText = params['title'];
+  }
+
+  const APPLICATION_JSON = 'application/json';
+  const headers = {'Content-Type': APPLICATION_JSON, 'Accept': APPLICATION_JSON};
+  const {protocol, host} = window.location;
+  fetch(`/api/user`, {headers}).then(authResp => {
+    if (authResp.ok) {
+      fetch(`/api/bookmarks`, {
+          method: 'POST', 
+          headers: {...headers, 'x-csrf-token': authResp.headers.get('x-csrf-token')},
+          body: JSON.stringify({
+            webUrl:{url: params['url']},
+            description: params['description'],
+            title: params['title']
+          })}).then(resp => 
+      {  
+        if (resp.status === 201) {
+          closeWithMessage("<span>Save complete!</span>")
+        } else if (resp.status === 409) {
+          closeWithMessage("<span>It looks like you've already bookmarked this page. </span>");
+        } else { 
+          throw resp;
+        }
+      }).catch(error => {throw error});
+    } else if (authResp.status >= 400 && authResp.status < 500) {
+      errorMessage('It looks like you\'re not signed in, ' + 
+				'please <a href="/signin" target="_new">sign in</a> to save your bookmark.');
+    } else { 
+      throw authResp; 
+    }
+  }).catch(error => {
+    errorMessage('Doh, unable to connect to tlrl, please try again later</span>\n<!-- ' + error + '-->');
+  });
+</script>
+</body>
+</html>
