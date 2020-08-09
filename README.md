@@ -74,7 +74,7 @@ The quick start instructions are for running a demo of the application or gettin
 You'll need the following software:
 - [Java 8 at a minimum](https://adoptopenjdk.net/)
 - [Docker](https://www.docker.com/) with [docker-compose](https://docs.docker.com/compose/install/)
-- configure at least one OAuth provider to handle authentication&mdash;IMO, GitHub is easier to set up than Google.
+- configure at least one OAuth provider to handle authentication&mdash;GitHub may be easier to set up than Google as the latter requires creating a project if you don't already have one.
 
 #### GitHub OAuth Config
 1. sign into GitHub and navigate to: https://docs.github.com/en/developers/apps/creating-an-oauth-app
@@ -114,6 +114,8 @@ spring:
 Technically you can name `application-local.yml` anything, but I've already configured the following:
   - `.gitignore` is already configured to ignore `application-local.yml`
   - `backend/src/main/resources/application.yml` is already configured to pull in the `local` profile
+
+_Just remember to update the gitignore with your custom "local" file name, so it doesn't accidentally get committed._  
 
 ### Running TLRL
 To run a demo of TLRL (assuming you've completed the requirements above), we use `docker-compose`
