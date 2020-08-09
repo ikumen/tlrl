@@ -7,13 +7,13 @@ const { Browser } = require('./browser');
 const { ensureDirectoryExists, makePath } = require('./helpers');
 
 // List of Kafka brokers to connect to
-const brokers = (process.env.FETCHER_KAFKA_BROKERS || 'localhost:9092').split(',');
-const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl';
+const brokers = (process.env.FETCHER_KAFKA_BROKERS || 'localhost:9093').split(',');
+const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl.fetcher';
 const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 // NOTHING=0, ERROR=1, WARN=2, INFO=4, DEBUG=5
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
 // Where we should archive PDF and mhtml files to
-const archiveDir = process.env.FETCHER_ARCHIVE_DIR || './data';
+const archiveDir = process.env.FETCHER_ARCHIVE_DIR || './target/fetcher/archive';
 const solrEndpoint = `http://${solrServer}/solr/tlrl/update?commit=true`; 
 
 // Make sure the archive directory is available
@@ -67,13 +67,11 @@ const onCreatedBookmark = ({baseDir, bookmark}) =>
       page = await browser.load(webUrl.url);
       await archivePage(ownerDir, bookmark, page);
       await indexPage(bookmark, page);
-      logger.info(`about to resolve:`)
       resolve(bookmark);
     } catch (err) {
-      logger.info(`caught error strange: , ${err}`)
+      logger.info(`Caught: , ${err}`)
       reject(err);
     } finally {
-      logger.info(`finally:`)
       if (page) await page.close();
     }
 });
@@ -103,15 +101,14 @@ const run = async ({baseDir}) => {
       const onProcessingError = (err) => {
         logger.error(`Caught: ${err.stack}, topic=${topic}, data=${data}`)
       }
-      
-      logger.info(`Processing ==foobar=>: ${prefix} ${message.key}, ${data}`);
+
+      logger.info(`Processing: ${prefix} ${message.key}, ${data}`);
       
       try {
         // Let's try to parse the incoming message
         const bookmarks = JSON.parse(data);
         // We have Bookmark message, create a helper for producing success events for given Bookmark
         const onProcessingSuccess = async (type, key, bookmark) => {
-          logger.info("about to send to topic archived")
           return await producer.send({topic: `bookmark.${type}`, messages: [
             { key: `${key}`, value: JSON.stringify({
               id: bookmark.id,
@@ -127,7 +124,7 @@ const run = async ({baseDir}) => {
           for (const i in bookmarks) {
             await onCreatedBookmark({baseDir, bookmark: bookmarks[i]})
               .then(async (resp) => {
-                logger.info(`created success: ${resp}`)
+                logger.info(`Processing created successful: ${resp}`)
                 await onProcessingSuccess('archived', message.key, bookmarks[i])
               })
               .catch(onProcessingError);

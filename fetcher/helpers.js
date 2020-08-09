@@ -5,7 +5,7 @@ const makePath = (parts) => parts.join('/');
 
 /** Helper for creating directories */
 const ensureDirectoryExists = (path, cb) => {
-  fs.mkdir(path, 0744, (err) => {
+  fs.mkdir(path, {mode: 0744, recursive: true}, (err) => {
     if (!err || err.code === 'EEXIST') {
       cb(null);
     } else cb(err); // unable to create

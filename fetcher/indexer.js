@@ -31,7 +31,6 @@ function Indexer({solrEndpoint, logger}) {
    * @param {Object} data contain Solr command and documents
    */
   const sendToSolr = (data) => new Promise((resolve, reject) => {
-    console.log("about to send to solr");
     const url = new URL(solrEndpoint);
     const opts = {...requestOpts, 
       hostname: url.hostname,
@@ -39,10 +38,10 @@ function Indexer({solrEndpoint, logger}) {
       path: url.pathname
     };
     const request = http.request(opts, (res) => {
-      //TODO: change to debug
-      logger.info(`===>status: ${res.statusCode}, headers: ${JSON.stringify(res.headers)}`);
+      logger.debug(`status: ${res.statusCode}, headers: ${JSON.stringify(res.headers)}`);
       res.on('data', (chunk) => {
-        console.log(`Received ${chunk.length} bytes of data.`);
+        // Note: response will not end unless data is consumed
+        //console.log(`Received ${chunk.length} bytes of data.`);
       });
       res.on('end', () => {
         logger.info("should resolve send to solr")
