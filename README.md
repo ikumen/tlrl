@@ -5,6 +5,7 @@ TLRL (_too long; read later_)&mdash;add, search and archive bookmarks. I use it 
 ### Start Here
 - [Project Overview](#project-overview) 
 - Quick start
+  - [Requirements](#requirements)
   - [Running TLRL](#running-tlrl)
   - [Development Setup](#development-setup)
 
@@ -69,22 +70,20 @@ The project structure is a [monorepo](https://en.wikipedia.org/wiki/Monorepo), w
 ## Quick Start
 The quick start instructions are for running a demo of the application or getting started with development. In either case you'll need to fork/clone the project: https://github.com/ikumen/tlrl.git and the following requirements.
 
-#### Requirements
+### Requirements
 You'll need the following software:
 - [Java 8 at a minimum](https://adoptopenjdk.net/)
 - [Docker](https://www.docker.com/) with [docker-compose](https://docs.docker.com/compose/install/)
+- configure at least one OAuth provider to handle authentication&mdash;IMO, GitHub is easier to set up than Google.
 
-#### OAuth Configurations
-Configure at least one OAuth provider to handle authentication&mdash;IMO, GitHub is easier to set up than Google.
-
-##### GitHub
+#### GitHub OAuth Config
 1. sign into GitHub and navigate to: https://docs.github.com/en/developers/apps/creating-an-oauth-app
 1. fill in anything for "Application Name", "Homepage URL" and "Application description"
 1. fill in `http://localhost:8080/login/oauth2/code/github` for "Authorization callback URL"
 1. and "Register application"
 1. on the next screen, take note of the "Client ID" and "Client Secret", and continue below
 
-##### Google
+#### Google OAuth Config
 1. sign into Google Cloud Platform and navigate to: https://console.cloud.google.com/apis/credentials (you may need to create a project if you don't already have one)
 1. click the "+ CREATE CREDENTIALS" button at the top
 1. select "OAuth client ID"
@@ -94,6 +93,7 @@ Configure at least one OAuth provider to handle authentication&mdash;IMO, GitHub
 1. add `http://localhost:8080/login/oauth2/code/google` URI for "Authorized redirect URIs"
 1. and "Create", a "OAuth client created" dialog will pop up with your "Client ID" and "Client Secret", take note of it and continue below
 
+#### Storing OAuth Config
 Once you have the "Client ID" and "Client Secret", create a local `properties` file to store the secrets and make sure it doesn't get checked into source control. 
 
 Create the file at `backend/src/main/resources/application-local.yml` and add the following:
