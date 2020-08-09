@@ -1,63 +1,66 @@
 ## TLRL Fetcher 
 
-Node application responsible for fetching, indexing and archiving bookmarked web pages&mdash;triggered by upstream bookmark events (e.g, when a bookmark is created, updated, and deleted) coming from a Kafka based message queue. 
+Node application responsible for fetching, indexing and archiving bookmarked web pages&mdash;triggered by upstream bookmark events (e.g, when a bookmark is created, updated, and deleted) via [Kafka](kafka.apache.org).
 
-Basically the application listens to Kafka broker on the following topics, and then performs the given `action` on the received `payload`:
+```
++------------------------------------------------+
+|                    TLRL                        |
+| +---------+     +-------+  +-----------------+ |
+| |  Spring | (1) | Kafka |  |(2)   Fetcher    | |
+| | backend |----->       |--> +-------------+ | |  (3) +------+
+| |   app   <-----|       <--| | Puppeteer   <---^-----> +-----+
+| |         |     |   (6) |  | +-------------+ | |      | | www |
+| +---------+     +-------+  |     (4) +----+  | |      +-|     |
+|                 +-------+  | (5) /---> PDF|  | |        +-----+
+|                 | Solr  <--^----/    +----+  | |
+|                 +-------+  +-----------------+ |
++------------------------------------------------+
+```
+
+The `backend` application publishes a message (step 1) to the following Kafka topics: `bookmark.created`, `bookmark.updated` and `bookmark.deleted`, whenever a bookmark is created, updated, or deleted. `fetcher` (step 2) listens on those topics and performs the given action on the received payload.
+
+Topics:
 - `bookmark.created`
-  - `payload`: newly created bookmark 
-  - `action`: for each bookmark, 
-    - start up an instance of Puppeteer, grab the web page at the bookmarked url
-    - generate a PDF (and mht) version of the web page for archiving
-    - extract the content for indexing
-    - send the bookmark and web page content to Solr to index
+  - `payload`: JSON representing newly created bookmark 
+  - `action`: 
+    - start up an instance of Puppeteer, (step 3) grab the web page at the bookmarked url
+    - generate a PDF (step 4) version of the web page for archiving
+    - extract the content (step 5) for indexing
+    - send the bookmark and web page (step 5) content to Solr to index
+    - notifies backend the bookmark has been archived/index (step 6 to topic `bookmark.archived`)
 - `bookmark.updated`
-  - `payload`: list of updated bookmarks 
-  - `action`: send the updated fields to Solr for indexing
+  - `payload`: JSON list of bookmarks with updated fields
+  - `action`: send the updated fields to Solr for indexing (step 5)
 - `bookmark.deleted`
-  - `payload`: list of deleted bookmark ids
-  - `action`: send delete command with bookmark ids to Solr
+  - `payload`: JSON list of deleted bookmark ids
+  - `action`: send delete command with bookmark ids to Solr (step 5)
 
-## Running Fetcher
-### In development while developing other parts of tlrl, but you need fetcher running
+### Running Fetcher
+First start the `backend` application and dependent services.
 
-If you need to have `fetcher` running while developing other components of `tlrl`, just use `docker-compose` to bring up a containerized version of fetcher, after you've started the `tlrl` application and Kafka. 
-
+```bash
+# Start the services
+docker-compose up zookeeper kafka solr
 ```
-# first start up Kafka and Solr
-docker-compose -f docker-compose.dev.yml up zookeeper kafka solr
+Then start the `backend` application.
+```bash
+# If you're not developing the backend app, but need it running
+docker-compose up app
+
+# ... or if you're also working on the backend application
+SPRING_PROFILES_ACTIVE=dev,h2 ./mvnw -f backend/pom.xml spring-boot:run -Ddb=h2
 ```
+Finally start `fetcher`.
+```bash
+# If you just need fetcher running
+docker-compose up fetcher
 
-Also make sure to start up `tlrl` application.
-
-```
-SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
-```
-
-Then start up fetcher.
-
-```
-docker-compose -f docker-compose.dev.yml up fetcher
-```
-
-### In development while developing fetcher
-
-If you need to actually run `fetcher` while actively working on it, just run it locally&mdash;it's just a Node app. Again, make sure to start Kafka and `tlrl` application beforehand.
-
-```
-docker-compose -f docker-compose.dev.yml up zookeeper kafka solr
-
-# in another terminal
-SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
-```
-Then start fetcher locally
-
-```
-cd src/main/fetcher
-npm install
-FETCHER_LOG_LVL=4 node index.js
+# ... or if you're also working on fetcher, just start it up like any node app
+npm install --prefix fetcher
+FETCHER_LOG_LVL=4 node fetcher/index.js
 ```
 
 Both scenarios above, run `fetcher` basically with the defaults:
-  - listens to Kafka broker at: `localhost:9092`
-  - saves the archived PDFs/mht to `./data`
+  - listens to Kafka broker at: `localhost:9093`
+  - saves the archived PDFs to `<project-root>/target/fetcher/archive`
 
