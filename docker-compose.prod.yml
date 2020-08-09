@@ -1,0 +1,36 @@
+# Docker compose for development that provides all the production services
+# to our local environment.
+---
+version: '3.7'
+networks:
+  default:
+    external: true
+    name: ${NETWORK:?}
+
+services:
+#  fetcher:
+#    build:
+#      context: ./fetcher
+#    image: tlrl-fetcher
+#    container_name: tlrl-fetcher
+#    environment:
+#      - FETCHER_LOG_LVL=${FETCHER_LOG_LVL:-4}
+#      - FETCHER_KAFKA_BROKERS=${KAFKA_BROKERS:-kafka:9092}
+#      - FETCHER_SOLR_SERVER=${SOLR_SERVER:-solr:8983}
+#    volumes:
+#      - "${FETCHER_HOST_ARCHIVE_DIR:-./target/fetcher/archive}:/data/fetcher"
+#    depends_on:
+#      - 'kafka'
+#
+  app:
+    build:
+      context: .
+      args:
+        - SKIP_TESTS=${SKIP_TESTS:-true}
+        - TARGET_DB=${TARGET_DB:-postgres}
+        - SPRING_PROFILES=${SPRING_PROFILES:-prod}
+    environment:
+      - SKIP_TESTS=${SKIP_TESTS:-true}
+      - TARGET_DB=${TARGET_DB:-postgres}
+      - SPRING_PROFILES=${SPRING_PROFILES:-prod}
+

@@ -1,0 +1,13 @@
+.idea
+fetcher
+solr
+target
+backend/target
+frontend/build
+frontend/node_modules
+.dockerignore
+.gitignore
+docker-compose.dev.yml
+docker-compose.yml
+Dockerfile
+README.md
