@@ -1,9 +1,9 @@
-
 # Default profile responsible for setting properties common across
 # all environments.
 spring:
-  #  profiles:
-  #    include:
+  profiles:
+    include:
+      - local
   # Profile pull from Maven profile property during the build process.
   # It's tied to a specific Maven profile that is responsible for loading
   # the target database dependencies.
@@ -28,10 +28,10 @@ spring:
 app:
   kafka:
     groupId: tlrl
-    bootstrap-servers: localhost:9093
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9093}
   solr:
     baseUrls:
-      - http://localhost:8983/solr/tlrl
+      - http://${SOLR_SERVER:localhost:8983}/solr/tlrl
   events:
     bookmark:
       archived: bookmark.archived
@@ -40,20 +40,23 @@ app:
       indexed: bookmark.indexed
       updated: bookmark.updated
 
-
-#logging:
-#  level:
-#    org:
-#      springframework: INFO
-#      hibernate: ERROR
+logging:
+  level:
+    org:
+      springframework: INFO
+      hibernate: ERROR
+    com.gnoht.tlrl: DEBUG
 
 ---
-# Profile responsible for setting development specific properties.
+#
+# Development specific profile
+#
 spring:
   profiles: dev
   datasource:
-    # For development, we connect as an admin user so that we
-    # can create/update the schema.
+    # In development, we need to have hibernate auto-generate the DDL so
+    # we connect as an admin `tlrladmin`, giving us full control of the
+    # database.
     username: ${DB_ADMIN_NAME:tlrladmin}
     password: ${DB_ADMIN_PASSWORD:tlrladmin}
     continue-on-error: true
@@ -61,25 +64,34 @@ spring:
     show-sql: true
 
 ---
-# Profile is responsible for setting production specific properties.
+#
+# Production specific profile
+#
 spring:
   profiles: prod
   datasource:
-    # In production, the `tlrluser` is restricted to schema usage. While in
-    # development, we connect with DB_ADMIN, which gives us full control of
-    # the database, so we can update the schema while developing.
+    # In production, the app only needs to read/write/delete from (e.g, schema usage),
+    # therefore will connect with `tlrluser`.
     username: ${DB_USER_NAME:?}
     password: ${DB_USER_PASSWORD:?}
   jpa:
     show-sql: false
 
+logging:
+  level:
+    org:
+      springframework: WARN
+      hibernate: ERROR
+    com.gnoht.tlrl: WARN
 ---
-# Profile is responsible for setting the H2 specific JDBC/JPA properties.
-# This should ONLY be run in none production environments.
+#
+# Profile responsible for setting the H2 specific JDBC/JPA properties.
+# This should ONLY be run in conjunction with "dev"
+#
 spring:
   profiles: h2
   datasource:
-    url: jdbc:h2:file:./tmp/${DB_NAME:tlrldb};MODE=PostgreSQL
+    url: jdbc:h2:file:./target/h2/${DB_NAME:tlrldb};MODE=PostgreSQL
     driverClassName: org.h2.Driver
     platform: h2-dev
   jpa:
@@ -94,9 +106,11 @@ spring:
       path: /h2-console
 
 ---
+#
 # Profile is responsible for setting the PostgreSQL specific JDBC/JPA
 # properties. It's possible to run this profile in any of the environments
 # (e.g, dev, test, production).
+#
 spring:
   profiles: postgres
   datasource:
