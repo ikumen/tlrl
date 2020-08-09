@@ -94,7 +94,9 @@ Configure at least one OAuth provider to handle authentication&mdash;IMO, GitHub
 1. add `http://localhost:8080/login/oauth2/code/google` URI for "Authorized redirect URIs"
 1. and "Create", a "OAuth client created" dialog will pop up with your "Client ID" and "Client Secret", take note of it and continue below
 
-Once you have the "Client ID" and "Client Secret", we'll need to create a local `properties` file to store the secrets and make sure it doesn't get checked into source control. Create a file at `backend/src/main/resources/application-local.yml` and add the following:
+Once you have the "Client ID" and "Client Secret", create a local `properties` file to store the secrets and make sure it doesn't get checked into source control. 
+
+Create the file at `backend/src/main/resources/application-local.yml` and add the following:
 
 ```yml
 spring:
@@ -109,21 +111,49 @@ spring:
             client-id: <your-github-client-id>
             client-secret: <your-github-client-secret>
 ```
- 
 Technically you can name `application-local.yml` anything, but I've already configured the following:
   - `.gitignore` is already configured to ignore `application-local.yml`
   - `backend/src/main/resources/application.yml` is already configured to pull in the `local` profile
 
 ### Running TLRL
-Next use `docker-compose` to bring up the application and all dependent services.
-```
-cd <project-root>
-docker-compose -f docker-compose.dev.yml up postgres zookeeper solr kafka
-```
+To run a demo of TLRL (assuming you've completed the requirements above), we use `docker-compose`
+to bring up the application and its dependent services. 
 
-Point your browser at http://localhost:8080 to check out the application.
+First we start the dependent services:
+```bash
+docker-compose up zookeeper solr kafka
+```
+Next, in another terminal we start the `backend` application and `fetcher`. 
+```bash
+docker-compose up app fetcher 
+```
+_I don't know a good way to have the `backend`/`fetcher` applications wait for Kafka brokers to start, which is why we are starting them from a second terminal._ 
+
+The build for all the dependent services, `fetcher` and the `backend` application should take several minutes. If all goes well, point your browser to http://localhost:8080 to check out the application.
 
 ### Development Setup
+For development, you'll need to install `Nodejs/npm` in addition to the requirements above. I usually start the dependent services ...
+
+```bash
+docker-compose up zookeeper solr kafka fetcher
+```
+
+then run the `backend` application manually as I'm developing.
+
+```bash
+# Install the frontend dependencies and build it (which copies it over to backend application for deployment)
+npm install --prefix frontend && npm run build --prefix frontend  
+```
+```bash
+# Run the backend application
+SPRING_PROFILES_ACTIVE=dev,h2 ./mvnw -f backend/pom.xml spring-boot:run -Ddb=h2
+```
+
+Point your browser to http://localhost:8080
+
+
+
+
 
 
 
