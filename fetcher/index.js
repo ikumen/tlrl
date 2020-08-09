@@ -8,7 +8,7 @@ const { ensureDirectoryExists, makePath } = require('./helpers');
 
 // List of Kafka brokers to connect to
 const brokers = (process.env.FETCHER_KAFKA_BROKERS || 'localhost:9092').split(',');
-const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl.fetcher';
+const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl';
 const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 // NOTHING=0, ERROR=1, WARN=2, INFO=4, DEBUG=5
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
