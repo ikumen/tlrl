@@ -77,6 +77,16 @@ services:
     depends_on:
       - 'kafka'
 
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: "no"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./target/fetcher/archive:/data/fetcher/archive"
+    ports:
+      - "9080:9080"
+
   app:
     build:
       context: .
