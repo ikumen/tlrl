@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .formLogin().disable()
       .httpBasic().disable()
       .authorizeRequests()
-        .antMatchers(USER_API_URL, BOOKMARK_API_URL).hasAuthority(Role.ROLE_USER.name())
+        .antMatchers(USER_API_URL, BOOKMARK_API_URL, "/archive/**").hasAuthority(Role.ROLE_USER.name())
         .antMatchers(SIGNUP_API_URL).hasAuthority(Role.ROLE_UNCONFIRMED.name())
         .anyRequest().permitAll()
         .and()

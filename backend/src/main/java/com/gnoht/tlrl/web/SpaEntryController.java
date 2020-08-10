@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SpaEntryController {
 
+  public static final String DEFAULT_ENTRY_URI = "/";
+
   /**
    * Return the SPA for the given paths.
    * @return
    */
   @GetMapping(path = {
-      "/",
+      DEFAULT_ENTRY_URI,
       "/@**",
       "/about",
       "/doh",

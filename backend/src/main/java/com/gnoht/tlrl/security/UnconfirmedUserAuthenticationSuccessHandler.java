@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 /**
  * @author ikumen
  */
-public class UnconfirmedUserAuthenticationSuccessHandler 
+public class    UnconfirmedUserAuthenticationSuccessHandler
     extends SavedRequestAwareAuthenticationSuccessHandler {
   
   @Override

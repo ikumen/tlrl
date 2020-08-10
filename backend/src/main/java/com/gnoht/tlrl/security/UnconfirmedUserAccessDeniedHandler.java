@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gnoht.tlrl.web.SpaEntryController;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,8 @@ public class UnconfirmedUserAccessDeniedHandler extends AccessDeniedHandlerImpl 
       AccessDeniedException accessDeniedException) throws IOException, ServletException 
   {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    // Unconfirmed users will need to "signup" requiring their user info on
+    // the signup form, so we pass it along via headers.
     if (authentication != null && authentication.getAuthorities().contains(Role.ROLE_UNCONFIRMED)) {
       User oauthUser = (User) ((OAuth2AuthenticationToken) authentication).getPrincipal();
       response.setHeader("user-name", oauthUser.getName());
@@ -42,7 +45,13 @@ public class UnconfirmedUserAccessDeniedHandler extends AccessDeniedHandlerImpl 
           .map(r -> r.name())
           .collect(Collectors.joining(",")));    
     }
-    
-    super.handle(request, response, accessDeniedException);
+
+    // "/archive" paths are usually serve on a new window/tab so there's
+    // no SPA loaded, therefore we should redirect them back to our SPA.
+    if (request.getRequestURI().startsWith("/archive")) {
+      response.sendRedirect(SpaEntryController.DEFAULT_ENTRY_URI);
+    } else {
+      super.handle(request, response, accessDeniedException);
+    }
   }
 }
