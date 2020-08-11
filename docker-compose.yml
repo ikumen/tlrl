@@ -69,6 +69,8 @@ services:
   fetcher:
     build:
       context: ./fetcher
+      args:
+        - FETCHER_ARCHIVE_DIR=${FETCHER_ARCHIVE_DIR:-/data/fetcher/archive}
     image: tlrl-fetcher
     container_name: tlrl-fetcher
     environment:
