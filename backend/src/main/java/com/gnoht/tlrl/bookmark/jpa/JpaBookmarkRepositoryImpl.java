@@ -25,11 +25,9 @@ public class JpaBookmarkRepositoryImpl
   @Override
   public Bookmark save(Bookmark bookmark) {
     if (bookmark.getId() == null) {
-      System.out.println("----------- persisting");
       entityManager.persist(bookmark);
       return bookmark;
     }
-    System.out.println("-------- merging");
     return entityManager.merge(bookmark);
   }
 }

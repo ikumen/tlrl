@@ -49,7 +49,7 @@ function SignUp() {
             ref={nameFieldRef} 
             required={true} 
             pattern={"^[a-zA-Z0-9_]*$"} 
-            minLength={2} 
+            minLength={3} 
           /> 
           <button className="pointer" onClick={handleSignUp}>let's go</button>
         </div>

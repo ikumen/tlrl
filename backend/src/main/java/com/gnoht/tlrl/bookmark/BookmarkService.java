@@ -148,7 +148,6 @@ public class BookmarkService {
   }
 
   private void setUpdatableProperties(Bookmark from, Bookmark to) {
-    System.out.println("=========== updating bookmark");
     if (from.getTitle() != null)
       to.setTitle(from.getTitle());
     if (from.getDescription() != null)

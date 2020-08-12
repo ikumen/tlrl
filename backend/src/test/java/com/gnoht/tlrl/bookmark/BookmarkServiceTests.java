@@ -67,13 +67,8 @@ public class BookmarkServiceTests {
         .tags(Arrays.asList(tag))
       .build());
 
-    //assertTrue(updated.getTags().size() == 1);
-    //assertTrue(updated.getTags().contains(tag));
-    bookmarkRepository.findById(updated.getId())
-        .ifPresent(b -> {
-          System.out.println("---- after updating");
-          b.getTags().forEach(System.out::println);
-        });
+    assertTrue(updated.getTags().size() == 1);
+    assertTrue(updated.getTags().contains(tag));
   }
 
   @Test

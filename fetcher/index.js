@@ -124,7 +124,7 @@ const run = async ({baseDir}) => {
           for (const i in bookmarks) {
             await onCreatedBookmark({baseDir, bookmark: bookmarks[i]})
               .then(async (resp) => {
-                logger.info(`Processing created successful: ${resp}`)
+                logger.info('Processing created successful:', resp);
                 await onProcessingSuccess('archived', message.key, bookmarks[i])
               })
               .catch(onProcessingError);
