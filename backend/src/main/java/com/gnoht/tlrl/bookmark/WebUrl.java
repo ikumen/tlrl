@@ -96,4 +96,27 @@ public class WebUrl implements Serializable {
         ", createdDateTime=" + createdDateTime +
         '}';
   }
+  
+  public static final class Builder {
+    private Long id;
+    private String url;
+    private LocalDateTime createdDateTime;
+    private Builder() {}
+    public static Builder builder() {
+      return new Builder();
+    }
+    
+    public Builder id(Long id) {
+      this.id = id; return this;
+    }
+    public Builder url(String url) {
+      this.url = url; return this;
+    }
+    public Builder createdDateTime(LocalDateTime date) {
+      this.createdDateTime = date; return this;
+    }
+    public WebUrl build() {
+      return new WebUrl(id, url, createdDateTime);
+    }
+  }  
 }

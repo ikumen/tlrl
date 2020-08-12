@@ -3,6 +3,7 @@ package com.gnoht.tlrl.bookmark;
 import com.gnoht.tlrl.core.AlreadyExistsException;
 import com.gnoht.tlrl.core.NotAuthorizedException;
 import com.gnoht.tlrl.core.NotFoundException;
+import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -65,14 +67,12 @@ public class BookmarkService {
     // Make sure given user is the owner (e.g, partial.owner
     // should have been added and verified upstream.
     LOG.info("bookmark.owner={}, partial.owner={}", bookmark.getOwner(), partial.getOwner());
-//    if (!bookmark.getOwner().equals(partial.getOwner()))
-//      throw new NotAuthorizedException();
+    if (!bookmark.getOwner().equals(partial.getOwner()))
+      throw new NotAuthorizedException();
 
     // Update the updatable properties
     setUpdatableProperties(partial, bookmark);
-    //return bookmarkRepository.save(bookmark);
     return bookmark;
-    //onBookmarksUpdated(Arrays.asList(bookmark));
   }
 
   @Transactional
@@ -86,11 +86,6 @@ public class BookmarkService {
       if (!results.get().getOwner().equals(owner))
         throw new NotAuthorizedException();
     }
-//    onBookmarksDeleted(
-//        Arrays.asList(Bookmark.Builder.builder()
-//            .id(id)
-//            .owner(owner)
-//            .build()));
   }
 
   @Transactional
@@ -98,11 +93,6 @@ public class BookmarkService {
       throws NotFoundException, NotAuthorizedException {
     int deletedCount = bookmarkRepository.deleteByIdInAndOwner(ids, owner);
     verifyAndHandleUpdatedCount(deletedCount, ids);
-
-//    onBookmarksDeleted(ids.stream()
-//        .map(id -> Bookmark.Builder.builder()
-//            .id(id).owner(owner).build())
-//        .collect(Collectors.toList()));
   }
 
   @Transactional
@@ -111,13 +101,6 @@ public class BookmarkService {
     int updatedCount = bookmarkRepository.updateSharedStatusByOwnerAndIdIn(
         status, owner, ids, LocalDateTime.now(ZoneOffset.UTC));
     verifyAndHandleUpdatedCount(updatedCount, ids);
-//    onBookmarksUpdated(ids.stream()
-//        .map(id -> Bookmark.Builder.builder()
-//            .id(id)
-//            .owner(owner)
-//            .sharedStatus(status)
-//            .build())
-//        .collect(Collectors.toList()));
   }
 
   @Transactional
@@ -126,13 +109,6 @@ public class BookmarkService {
     int updatedCount = bookmarkRepository.updateReadStatusByOwnerAndIdIn(
         status, owner, ids, LocalDateTime.now(ZoneOffset.UTC));
     verifyAndHandleUpdatedCount(updatedCount, ids);
-//    onBookmarksUpdated(ids.stream()
-//        .map(id -> Bookmark.Builder.builder()
-//            .id(id)
-//            .readStatus(status)
-//            .owner(owner)
-//            .build())
-//        .collect(Collectors.toList()));
   }
 
   public Page<Bookmark> findAll(User owner, Pageable pageable) {

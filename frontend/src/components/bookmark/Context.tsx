@@ -50,15 +50,9 @@ export function Provider({children}: PropsWithChildren<any>) {
     /**
      * Search Bookmarks for content that matches given terms. 
      */
-    search: (terms: string, opts: {page: number} = {page: 0}) => (
-      api.post('/search', {data: {
-        terms: (terms ? [terms.trim()] : []),
-        operator: "OR", bookmark: {
-          sharedStatus: 'PRIVATE'
-        }}
-      })
-      .then(handleResults)
-    ),
+    search: (terms: string, opts: {page: number} = {page: 0}) => 
+      api.get(`/search?q=${terms ? terms.trim() : ''}&page=${opts.page}`).then(handleResults)
+    ,
     /**
      * Create the given Bookmark.
      * @param partial {@link Partial<Bookmark>} with attributes to save.

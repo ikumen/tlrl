@@ -1,8 +1,7 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.gnoht.tlrl.support.ApplicationContextHelper;
+import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
 import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,10 +27,25 @@ public class BookmarkController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private BookmarkService bookmarkService;
+  private SearchService<Bookmark> searchService;
 
   @Inject
-  public BookmarkController(BookmarkService bookmarkService) {
+  public BookmarkController(
+      BookmarkService bookmarkService,
+      SearchService<Bookmark> searchService) {
     this.bookmarkService = bookmarkService;
+    this.searchService = searchService;
+  }
+
+  @GetMapping(path = "/search")
+  public ResponseEntity<Page<Bookmark>> search(
+      @RequestParam(name = "q") String terms,
+      @PageableDefault Pageable pageable,
+      @AuthenticationPrincipal User user) 
+  {
+    LOG.info("Searching for: {}", terms);
+    return ResponseEntity.ok(searchService
+      .search(terms, new HashMap<String, Object>(), user, pageable));
   }
 
   /**
