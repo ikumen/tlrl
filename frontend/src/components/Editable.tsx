@@ -27,7 +27,7 @@ function Editable({id, editable, value, onChange, shouldTruncate = false}: Props
   }, [editable, editableRef, value])
 
   return <div id={id} 
-      className={`spacer ${editable ? 'editable bg-washed-yellow' : ''} ${shouldTruncate ? 'truncate' : ''} cf fl w-100 ma0`}
+      className={`spacer ${editable ? 'editable bg-washed-yellow tab' : ''} ${shouldTruncate ? 'truncate' : ''} cf fl w-100 ma0`}
       contentEditable={editable}
       placeholder={`${id}`}
       ref={editableRef}

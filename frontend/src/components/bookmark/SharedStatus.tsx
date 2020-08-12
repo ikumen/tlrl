@@ -12,7 +12,7 @@ function togglePrivacy(bookmark: Bookmark) {
 function SharedStatusComponent({bookmark}: {bookmark: Bookmark}) {
   const bookmarkContext = useContext(BookmarkContext);
 
-  return <span tabIndex={0} className="ph2 underline-hover pointer" 
+  return <span tabIndex={0} className="ph2 tab underline-hover pointer" 
     onClick={() => bookmarkContext.update!({id: bookmark.id, sharedStatus: togglePrivacy(bookmark)})}>
     {bookmark.sharedStatus === SharedStatus.PRIVATE 
       ? <i className={`${defaultIconClass} green`}>lock</i>

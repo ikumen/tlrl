@@ -75,12 +75,13 @@
     .link.enabled:hover, .clickable {
       cursor: pointer;
     }
-    /* textarea, input, select {
-      outline: none;
+    [contenteditable]:focus, textarea:focus, .tab:focus, input:focus, select:focus {
+      outline: thin dotted #551A8B;
       -webkit-box-shadow: none;
       -moz-box-shadow: none;
       box-shadow: none;
-    } */
+    }
+
     input:invalid {
       color: red;
     }
@@ -90,10 +91,6 @@
       min-width: 1px;
       height: 1px;
       border-left: 1px solid #ddd;
-    }
-
-    [contenteditable]:focus {
-      outline: 0px solid transparent;
     }
 
     [contentEditable=true]:empty:not(:focus)::before {

@@ -6,7 +6,7 @@ import SharedStatus from './SharedStatus';
 import Tags from './Tags';
 import BookmarkContext from './Context';
 
-const btnStyle = "f7 fw3 bw0 br1 ph3 pv1 ml2 dib pointer";
+const btnStyle = "f7 tab fw3 bw0 br1 ph3 pv1 ml2 dib pointer";
 
 type ListItemProps = {
   bookmark: Bookmark;

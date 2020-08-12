@@ -11,7 +11,7 @@ type Props = {
 }
 
 function EditBookmarksToolBar({toggleAllSelected, selectedItems, enabled}: Props) {
-  const styles = `${defaultStyles} ${enabled ? 'clickable bg-black-10' : 'bg-near-white'}`;
+  const styles = `${defaultStyles} ${enabled ? 'clickable bg-black-10 tab' : 'bg-near-white tab'}`;
   const goBtnStyles = `${styles} ${enabled ? 'black underline-hover' : 'black-20'}`;
   const deleteBtnStyles = `${styles} white ${enabled ? 'bg-red underline-hover' : 'bg-washed-red'}`;
 

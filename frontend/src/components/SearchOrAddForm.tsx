@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { BookmarkContext } from './bookmark';
 import { AuthContext, AuthStatus } from '../auth';
 
-const buttonStyle = "pv1 ph2 ph3-l f6 ml1 bw0 br1 pointer fw3 white";
+const buttonStyle = "pv1 ph2 ph3-l f6 ml1 tab bw0 br1 pointer fw3 white";
 
 function SearchOrAddForm() {
   const history = useHistory();
