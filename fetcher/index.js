@@ -14,7 +14,7 @@ const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
 // Where we should archive PDF and mhtml files to
 const archiveDir = process.env.FETCHER_ARCHIVE_DIR || './target/fetcher/archive';
-const solrEndpoint = `http://${solrServer}/solr/tlrl/update?commit=true`; 
+const solrEndpoint = `http://${solrServer}/solr/tlrl/update`;
 
 // Make sure the archive directory is available
 ensureDirectoryExists(archiveDir, (err) => {
@@ -108,7 +108,6 @@ const run = async ({baseDir}) => {
       logger.info(`Processing: ${prefix} ${message.key}, ${data}`);
       
       try {
-        // Let's try to parse the incoming message
         const bookmarks = JSON.parse(data);
         // We have Bookmark message, create a helper for producing success events for given Bookmark
         const onProcessingSuccess = async (type, key, bookmark) => {
@@ -121,9 +120,8 @@ const run = async ({baseDir}) => {
             })}
           ]});
         }
-        // Try to process the message
+
         if (topic === 'bookmark.created') {
-          // We only want to handle 1 bookmark at a time
           for (const i in bookmarks) {
             await onCreatedBookmark({baseDir, bookmark: bookmarks[i]})
               .then(async (resp) => {
@@ -134,7 +132,6 @@ const run = async ({baseDir}) => {
           }
         } else if (topic === 'bookmark.updated') {
           onUpdatedBookmark({bookmarks})
-            //.then(() => onProcessingSuccess('indexed'))
             .then(() => logger.info(`Processing updated bookmarks: ${bookmarks
               .map(b => `${b.id}`).join(',')}`))
             .catch(onProcessingError);
@@ -145,7 +142,6 @@ const run = async ({baseDir}) => {
             .catch(onProcessingError);
         }
       } catch (err) {
-        // Log the error and continue processing messages
         onProcessingError(err);
       }
     },

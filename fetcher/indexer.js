@@ -44,7 +44,6 @@ function Indexer({solrEndpoint, logger}) {
         //console.log(`Received ${chunk.length} bytes of data.`);
       });
       res.on('end', () => {
-        //logger.info("should resolve send to solr")
         resolve()
       }); 
     });
@@ -60,7 +59,6 @@ function Indexer({solrEndpoint, logger}) {
         sharedStatus, createdDateTime, updatedDateTime, tags } = bookmark;
 
       return sendToSolr(JSON.stringify({
-        commit: {},
         add: { doc: {
           id: `${id}`,
           ownerId: owner.id,
@@ -81,12 +79,12 @@ function Indexer({solrEndpoint, logger}) {
     /** Updating existing Bookmark document with given id  */
     update: (bookmarks) => {
       //logger.debug('updating: ', bookmarks);
-      return sendToSolr(`{"commit": {},  ${bookmarks.map(updatedBookmarkToSolrUpdateStr).join(',')}}`);
+      return sendToSolr(`{${bookmarks.map(updatedBookmarkToSolrUpdateStr).join(',')}}`);
     },
     /** Update the delete flag for given Bookmark document */
     delete: (bookmarks) => {
       //logger.debug('deleting: ', bookmarks);
-      return sendToSolr(`{"commit": {}, "delete": [${bookmarks.map(({id}) => `"${id}"`).join(',')}]}`);
+      return sendToSolr(`{"delete": [${bookmarks.map(({id}) => `"${id}"`).join(',')}]}`);
     }
   }
 }
