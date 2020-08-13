@@ -24,6 +24,7 @@ public class SolrBookmarkDocument {
   public static final String CREATED_DT_FLD = "createdDateTime";
   public static final String ID_FLD = "id";
   public static final String UPDATED_DT_FLD = "updatedDateTime";
+  public static final String ARCHIVED_DT_FLD = "archivedDateTime";
 
   public static final String DESCRIPTION_FLD = "description";
   public static final String READ_STATUS_FLD = "readStatus";
@@ -107,6 +108,12 @@ public class SolrBookmarkDocument {
   @Field(CREATED_DT_FLD)
   public void setCreatedDateTime(Date date) {
     builder.createdDateTime(LocalDateTime
+      .ofInstant(date.toInstant(), ZoneOffset.UTC));
+  }
+
+  @Field(ARCHIVED_DT_FLD)
+  public void setArchivedDateTime(Date date) {
+    builder.archivedDateTime(LocalDateTime
       .ofInstant(date.toInstant(), ZoneOffset.UTC));
   }
   

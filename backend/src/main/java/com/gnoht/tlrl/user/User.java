@@ -101,9 +101,10 @@ public class User implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (o == null || !(o instanceof User)) return false;
     User user = (User) o;
-    return email.equals(user.email);
+    return (id != null && id.equals(user.getId()))
+        || (email != null && email.equals(user.email));
   }
 
   @Override

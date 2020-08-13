@@ -76,6 +76,9 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
       containerFactory = "bookmarkKafkaListenerContainerFactory")
   @Override
   public void onArchived(Bookmark bookmark) {
+    //TODO: we have a mini-cycle here where:
+    //  onCreate -> fetcher -> onArchived -> update -> onUpdate -> fetcher
+    // we can make onUpdate smarter to avoid calling fetcher again.
     LOG.debug("Consuming archived topic message: {}", bookmark);
     bookmarkService.update(bookmark);
   }

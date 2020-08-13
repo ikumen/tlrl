@@ -27,7 +27,7 @@ spring:
 
 app:
   kafka:
-    groupId: tlrl
+    groupId: tlrl-app
     bootstrap-servers: ${KAFKA_BROKERS:localhost:9093}
   solr:
     baseUrls:

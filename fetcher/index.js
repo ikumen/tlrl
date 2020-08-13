@@ -8,7 +8,7 @@ const { ensureDirectoryExists, makePath } = require('./helpers');
 
 // List of Kafka brokers to connect to
 const brokers = (process.env.FETCHER_KAFKA_BROKERS || 'localhost:9093').split(',');
-const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl.fetcher';
+const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl-fetcher';
 const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 // NOTHING=0, ERROR=1, WARN=2, INFO=4, DEBUG=5
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
@@ -32,7 +32,10 @@ const kafka = new Kafka({
   brokers
 });
 
-const consumer = kafka.consumer({groupId});
+const consumer = kafka.consumer({
+  groupId,
+  sessionTimeout: 90000
+});
 const producer = kafka.producer();
 const logger = kafka.logger();
 // Instance of puppeteer browser/page wrapper

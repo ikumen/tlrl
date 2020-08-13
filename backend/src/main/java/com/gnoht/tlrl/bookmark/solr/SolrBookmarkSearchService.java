@@ -55,6 +55,7 @@ public class SolrBookmarkSearchService implements SearchService<Bookmark> {
       .addField(OWNER_NAME_FLD)
       .addField(TAGS_FLD)
       .addField(CREATED_DT_FLD)
+      .addField(ARCHIVED_DT_FLD)
       .addField(DESCRIPTION_FLD)
       .addField(READ_STATUS_FLD)
       .addField(SHARED_STATUS_FLD)

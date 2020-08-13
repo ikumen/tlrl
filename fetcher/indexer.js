@@ -44,7 +44,7 @@ function Indexer({solrEndpoint, logger}) {
         //console.log(`Received ${chunk.length} bytes of data.`);
       });
       res.on('end', () => {
-        logger.info("should resolve send to solr")
+        //logger.info("should resolve send to solr")
         resolve()
       }); 
     });
@@ -57,7 +57,7 @@ function Indexer({solrEndpoint, logger}) {
     /** Add new Bookmark document to our index */
     add: (bookmark) => {
       const { id, title, content, owner, webUrl, description, readStatus, 
-        sharedStatus, createdDateTime, tags } = bookmark;
+        sharedStatus, createdDateTime, updatedDateTime, tags } = bookmark;
 
       return sendToSolr(JSON.stringify({
         commit: {},
@@ -73,7 +73,8 @@ function Indexer({solrEndpoint, logger}) {
           url: webUrl.url,
           readStatus,
           sharedStatus,
-          createdDateTime
+          createdDateTime,
+          archivedDateTime: updatedDateTime
         }}
       }));
     },
