@@ -3,8 +3,13 @@ package com.gnoht.tlrl.bookmark;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+
+import org.springframework.lang.NonNull;
+
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author ikumen@gnoht.com
@@ -30,6 +35,11 @@ public class Tag implements Serializable {
 
   public Tag(String id) {
     this.id = new TagId(id);
+  }
+
+  public Tag(String id, long count) {
+    this.id = new TagId(id);
+    this.count = count;
   }
 
   public Tag(String id, Bookmark bookmark, int pos) {
@@ -83,6 +93,11 @@ public class Tag implements Serializable {
         // ", pos=" + pos +
         ", count=" + count +
         '}';
+  }
+  
+  public static String toString(@NonNull Collection<Tag> tags) {
+    return tags.stream().map(Tag::toString)
+      .collect(Collectors.joining(","));
   }
 
   /**

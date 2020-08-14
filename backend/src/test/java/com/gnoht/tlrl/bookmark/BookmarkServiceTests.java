@@ -1,13 +1,12 @@
 package com.gnoht.tlrl.bookmark;
 
+import com.gnoht.tlrl.bookmark.jpa.JpaBookmarkRepository;
 import com.gnoht.tlrl.user.User;
 import com.gnoht.tlrl.user.UserService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BookmarkServiceTests {
 
   @Autowired BookmarkService bookmarkService;
-  @Autowired BookmarkRepository bookmarkRepository;
+  @Autowired JpaBookmarkRepository bookmarkRepository;
   @Autowired UserService userService;
 
   User user;

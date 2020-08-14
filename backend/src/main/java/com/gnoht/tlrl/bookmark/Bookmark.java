@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gnoht.tlrl.bookmark.jpa.JpaBookmarkListener;
 import com.gnoht.tlrl.core.Constants;
 import com.gnoht.tlrl.user.User;
+import com.querydsl.core.annotations.QueryProjection;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -105,7 +107,6 @@ public class Bookmark implements Serializable {
       @JsonProperty(value = "updatedDateTime") LocalDateTime updatedDateTime,
       @JsonProperty(value = "archivedDateTime") LocalDateTime archivedDateTime,
       @JsonProperty(value = "tags") @Size(max = MAX_TAGS_PER_BOOKMARK) List<Tag> tags,
-      @JsonProperty(value = "content") String content,
       @JsonProperty(value = "version") Long version)
   {
     this.id = id;
@@ -119,8 +120,17 @@ public class Bookmark implements Serializable {
     this.updatedDateTime = updatedDateTime;
     this.archivedDateTime = archivedDateTime;
     setTags(tags);
-    this.content = content;
     this.version = version == null ? 0l : version;
+  }
+    
+  public Bookmark(Long id, User owner, WebUrl webUrl, String title, String description, 
+      ReadStatus readStatus, SharedStatus sharedStatus, LocalDateTime createdDateTime, 
+      LocalDateTime updatedDateTime, LocalDateTime archivedDateTime, Long version, Tag ...tags) 
+  {
+    this(id, owner, webUrl, title, description, readStatus, sharedStatus, createdDateTime, 
+        updatedDateTime, archivedDateTime, 
+        Arrays.stream(tags).filter(Objects::nonNull).collect(Collectors.toList()), 
+        version);
   }
 
   public Long getId() {
@@ -308,6 +318,7 @@ public class Bookmark implements Serializable {
         ", createdDateTime=" + createdDateTime +
         ", updatedDateTime=" + updatedDateTime +
         ", archivedDateTime=" + archivedDateTime +
+        ", tags=[" + Tag.toString(tags) + "]" +
         ", content='" + content + "'}";
   }
 
@@ -391,12 +402,11 @@ public class Bookmark implements Serializable {
           .updatedDateTime(bookmark.getUpdatedDateTime())
           .archivedDateTime(bookmark.getArchivedDateTime())
           .tags(bookmark.getTags())
-          .content(bookmark.getContent())
           .version(bookmark.getVersion());
     }
 
     public Bookmark build() {
-      return new Bookmark(id,owner,webUrl,title,description,readStatus,sharedStatus,createdDateTime,updatedDateTime,archivedDateTime,tags,content,version);
+      return new Bookmark(id,owner,webUrl,title,description,readStatus,sharedStatus,createdDateTime,updatedDateTime,archivedDateTime,tags,version);
     }
   }
 }

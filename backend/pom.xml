@@ -68,6 +68,19 @@
 		  <groupId>org.apache.solr</groupId>
 		  <artifactId>solr-solrj</artifactId>
 		</dependency>
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-apt</artifactId>
+<!--      <version>${querydsl.version}</version>-->
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-jpa</artifactId>
+<!--      <version>${querydsl.version}</version>-->
+    </dependency>
+
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -206,9 +219,7 @@
             </goals>
             <configuration>
               <outputDirectory>target/generated-sources/annotations</outputDirectory>
-              <processors>
-                <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-              </processors>
+              <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
             </configuration>
           </execution>
         </executions>

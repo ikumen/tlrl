@@ -1,18 +1,63 @@
+/**
+ * 
+ */
 package com.gnoht.tlrl.bookmark;
-
-import com.gnoht.tlrl.core.Repository;
-import com.gnoht.tlrl.user.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.gnoht.tlrl.support.Specification;
+import com.gnoht.tlrl.user.User;
+
 /**
- * @author ikumen@gnoht.com
+ * @author ikumen
  */
-public interface BookmarkRepository extends Repository<Bookmark, Long> {
+public interface BookmarkRepository {
+  
+  /**
+   * Save given {@link Bookmark} to the underlying data repository.
+   * 
+   * @param <S>
+   * @param entity
+   * @return
+   */
+  <S extends Bookmark> S save(S bookmark);
+
+  /**
+   * Find a {@link Bookmark} by the given id.
+   * @param id
+   * @return
+   */
+  Optional<Bookmark> findById(Long id);
+  
+  /**
+   * Find all {@link Bookmark}s belonging to given {@link User}, filtered by the given {@link Specification}.
+   * 
+   * @param user
+   * @param specification
+   * @param pageable
+   * @return
+   */
+  Page<Bookmark> findAll(User user, BookmarkSpecifications specifications, Pageable pageable);
+  
+  /**
+   * 
+   * @param user
+   * @param specifications
+   * @return
+   */
+  List<Tag> findRelatedTags(User user, BookmarkSpecifications specifications);
+  
+  /**
+   * 
+   * @return
+   */
+  BookmarkSpecifications newSpecifications();
 
   /**
    * Find the {@link Bookmark} with given url and owner.
@@ -98,5 +143,6 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
    * @param owner
    * @return
    */
+  @Transactional
   int deleteByIdInAndOwner(List<Long> ids, User owner);
 }

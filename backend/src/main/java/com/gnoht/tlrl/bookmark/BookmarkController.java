@@ -14,9 +14,13 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ikumen@gnoht.com
@@ -30,22 +34,16 @@ public class BookmarkController {
   private SearchService<Bookmark> searchService;
 
   @Inject
-  public BookmarkController(
-      BookmarkService bookmarkService,
-      SearchService<Bookmark> searchService) {
+  public BookmarkController(BookmarkService bookmarkService, SearchService<Bookmark> searchService) {
     this.bookmarkService = bookmarkService;
     this.searchService = searchService;
   }
 
   @GetMapping(path = "/search")
-  public ResponseEntity<Page<Bookmark>> search(
-      @RequestParam(name = "q") String terms,
-      @PageableDefault Pageable pageable,
-      @AuthenticationPrincipal User user) 
-  {
+  public ResponseEntity<Page<Bookmark>> search(@RequestParam(name = "q") String terms,
+      @PageableDefault Pageable pageable, @AuthenticationPrincipal User user) {
     LOG.info("Searching for: {}", terms);
-    return ResponseEntity.ok(searchService
-      .search(terms, new HashMap<String, Object>(), user, pageable));
+    return ResponseEntity.ok(searchService.search(terms, new HashMap<String, Object>(), user, pageable));
   }
 
   /**
@@ -57,21 +55,17 @@ public class BookmarkController {
    * @return
    */
   @PostMapping
-  public ResponseEntity<Bookmark> create(
-      @RequestBody Bookmark bookmark,
-      UriComponentsBuilder uriBuilder,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<Bookmark> create(@RequestBody Bookmark bookmark, UriComponentsBuilder uriBuilder,
+      @AuthenticationPrincipal User user) {
     LOG.info("Creating bookmark: {}", bookmark);
     bookmark.setOwner(user);
     Bookmark createdBookmark = bookmarkService.create(bookmark);
 
-    UriComponents uriComponents = uriBuilder.path("/api/bookmarks/{1}")
-      .buildAndExpand(createdBookmark.getId());
+    UriComponents uriComponents = uriBuilder.path("/api/bookmarks/{1}").buildAndExpand(createdBookmark.getId());
 
-    return ResponseEntity.created(uriComponents.toUri())
-        .body(createdBookmark);
+    return ResponseEntity.created(uriComponents.toUri()).body(createdBookmark);
   }
+
   /**
    * Handles request for updating the given {@link Bookmark}.
    *
@@ -80,11 +74,8 @@ public class BookmarkController {
    * @return
    */
   @PatchMapping(path = "/{id}")
-  public ResponseEntity<Bookmark> update(
-      @PathVariable Long id,
-      @RequestBody Bookmark partial,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<Bookmark> update(@PathVariable Long id, @RequestBody Bookmark partial,
+      @AuthenticationPrincipal User user) {
     LOG.info("Updating bookmark: id={}, partial={}", id, partial);
     partial.setOwner(user);
     partial.setId(id);
@@ -93,40 +84,32 @@ public class BookmarkController {
   }
 
   /**
-   * Updates the {@link ReadStatus} for {@link Bookmark}s in the given id
-   * list.
+   * Updates the {@link ReadStatus} for {@link Bookmark}s in the given id list.
    *
    * @param readStatus
    * @param bookmarkIds
    * @return
    */
   @PatchMapping("/read/{status}")
-  public ResponseEntity<List<Long>> updateAll(
-      @PathVariable("status") ReadStatus readStatus,
-      @RequestBody List<Long> bookmarkIds,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<List<Long>> updateAll(@PathVariable("status") ReadStatus readStatus,
+      @RequestBody List<Long> bookmarkIds, @AuthenticationPrincipal User user) {
     LOG.info("Updating ReadStatus: status={}, ids={}", readStatus, bookmarkIds);
-    bookmarkService.updateAll(readStatus, bookmarkIds, user);
+    bookmarkService.updateAllWithReadStatus(readStatus, bookmarkIds, user);
     return ResponseEntity.ok(bookmarkIds);
   }
 
   /**
-   * Updates the {@link SharedStatus} for {@link Bookmark}s in the given id
-   * list.
+   * Updates the {@link SharedStatus} for {@link Bookmark}s in the given id list.
    *
    * @param sharedStatus
    * @param bookmarkIds
    * @return
    */
   @PatchMapping("/shared/{status}")
-  public ResponseEntity<List<Long>> updateAll(
-      @PathVariable("status") SharedStatus sharedStatus,
-      @RequestBody List<Long> bookmarkIds,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<List<Long>> updateAll(@PathVariable("status") SharedStatus sharedStatus,
+      @RequestBody List<Long> bookmarkIds, @AuthenticationPrincipal User user) {
     LOG.info("Updating SharedStatus: status={}, ids={}", sharedStatus, bookmarkIds);
-    bookmarkService.updateAll(sharedStatus, bookmarkIds, user);
+    bookmarkService.updateAllWithSharedStatus(sharedStatus, bookmarkIds, user);
     return ResponseEntity.ok(bookmarkIds);
   }
 
@@ -137,10 +120,7 @@ public class BookmarkController {
    * @return
    */
   @DeleteMapping(path = "/{id}")
-  public ResponseEntity<Void> delete(
-      @PathVariable Long id,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal User user) {
     LOG.info("Deleting id={}", id);
     bookmarkService.delete(id, user);
     return ResponseEntity.ok().build();
@@ -153,21 +133,24 @@ public class BookmarkController {
    * @return
    */
   @DeleteMapping()
-  public ResponseEntity<List<Long>> deleteAll(
-      @RequestBody List<Long> ids,
-      @AuthenticationPrincipal User user)
-  {
+  public ResponseEntity<List<Long>> deleteAll(@RequestBody List<Long> ids, @AuthenticationPrincipal User user) {
     LOG.info("Deleting all ids={}", ids);
     bookmarkService.deleteAll(ids, user);
     return ResponseEntity.ok(ids);
   }
 
   @GetMapping
-  public ResponseEntity<Page<Bookmark>> findAll(
-      @PageableDefault Pageable pageable,
-      @AuthenticationPrincipal User user)
-  {
-    Page<Bookmark> results = bookmarkService.findAll(user, pageable);
+  public ResponseEntity<Page<Bookmark>> findAll(@Valid BookmarkCriteria criteria, 
+      @PageableDefault Pageable pageable, @AuthenticationPrincipal User user) {
+    LOG.info("findAll: critera={}", criteria);
+    Page<Bookmark> results = bookmarkService.findAll(user, criteria, pageable);
     return ResponseEntity.ok(results);
+  }
+  
+  @GetMapping("/tags")
+  public ResponseEntity<List<Tag>> findAllRelatedTags(
+      @Valid BookmarkCriteria criteria, @AuthenticationPrincipal User user) {
+    LOG.info("findRelatedTags: criteria={}", criteria);
+    return ResponseEntity.ok(bookmarkService.findAllRelatedTags(user, criteria));
   }
 }

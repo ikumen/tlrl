@@ -52,6 +52,12 @@ public class User implements Serializable {
 
   User() {/* for JPA */}
 
+  public User(Long id, String name, String email) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+  }
+
   @JsonCreator
   public User(
       @JsonProperty("id") Long id,

@@ -12,5 +12,6 @@ import org.springframework.data.domain.Pageable;
  * @author ikumen@gnoht.com
  */
 public interface SearchService<T> {
+
   Page<T> search(String terms, Map<String, Object> filters, User user, Pageable pageable);
 }
