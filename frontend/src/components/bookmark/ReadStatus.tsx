@@ -19,7 +19,7 @@ function ReadStatusComponent({bookmark}: {bookmark: Bookmark}) {
 
   return <span tabIndex={0} className="pr2 tab underline-hover pointer" 
     onClick={() => bookmarkContext.update!({id: bookmark.id, readStatus: nextStatus[bookmark.readStatus]})}>
-    <i className={`material-icons v-btm md-small mr1 ${statusStyles[bookmark.readStatus]}`}>menu_book</i>
+    <i className={`material-icons v-btm md-med mr1 ${statusStyles[bookmark.readStatus]}`}>menu_book</i>
     {('' + bookmark.readStatus).toLocaleLowerCase()}
   </span>
 };

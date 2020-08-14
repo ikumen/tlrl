@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Bookmark, SharedStatus } from './types';
 import BookmarkContext from './Context';
 
-const defaultIconClass = "material-icons v-btm md-small mr1";
+const defaultIconClass = "material-icons v-btm md-med mr1";
 
 function togglePrivacy(bookmark: Bookmark) {
   return bookmark.sharedStatus === SharedStatus.PRIVATE 

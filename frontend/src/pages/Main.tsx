@@ -3,6 +3,7 @@ import * as Bookmark from '../components/bookmark';
 import { Switch, Route } from 'react-router-dom';
 import Bookmarks from './Bookmarks';
 import Search from './Search';
+import RelatedTags from '../components/RelatedTags';
 
 function Main() {
   return (
@@ -15,7 +16,8 @@ function Main() {
         </Switch>
       </Bookmark.Provider>  
       </div>
-      <div className="fl w-20">
+      <div className="fl w-20 pl3">
+        <RelatedTags />
       </div>
     </main>
   );

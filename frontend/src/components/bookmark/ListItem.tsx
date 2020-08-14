@@ -42,7 +42,7 @@ function BookmarkListItem(props: ListItemProps) {
     {/* ---- url ---- */}
     <div className="w-100 nowrap mb1 pa0">
       <span className="fl w-95">
-        <a href={bookmark.webUrl.url} className="fl f6 w-100 link purple truncate">{bookmark.webUrl.url}</a>
+        <a href={bookmark.webUrl.url} target={`_tu${bookmark.id}`} className="fl f6 w-100 link purple truncate">{bookmark.webUrl.url}</a>
       </span>
       <span className="fr w-05 tr">
         <input type="checkbox" className="v-top" onChange={selectItem} checked={props.selected}></input>
@@ -79,7 +79,7 @@ function BookmarkListItem(props: ListItemProps) {
         <ReadStatus bookmark={bookmark} /> 
         <SharedStatus bookmark={bookmark} />
         <div className="fl w-100 mt2 f6">
-          {bookmark.archivedDateTime && <a className="link" href={`archive/${bookmark.owner.id}/${bookmark.id}`} target="_new"><i className="material-icons v-mid mr1 md-small">launch</i> archive</a>}
+          {bookmark.archivedDateTime && <a className="link" href={`archive/${bookmark.owner.id}/${bookmark.id}`} target={`_ta${bookmark.id}`}><i className="material-icons v-mid md-sm">launch</i> archive</a>}
         </div>
       </div>
       <div className="fr w-50 tr">
