@@ -19,7 +19,7 @@ import java.util.Set;
  * @author ikumen@gnoht.com
  */
 @Entity
-@Table
+@Table(name = "app_user")
 @NamedEntityGraph(name = "User.roles",
     attributeNodes = @NamedAttributeNode("roles"))
 public class User implements Serializable {

@@ -61,7 +61,7 @@ services:
       - DB_USER_PASSWORD=${DB_USER_PASSWORD:-tlrluser}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     volumes:
-      - "./backend/db/schema:/docker-entrypoint-initdb.d"
+      - "./config/db/postgresql/schema:/docker-entrypoint-initdb.d"
       - "./target/postgres:/var/lib/postgresql/data"
     ports:
       - "5432:5432"

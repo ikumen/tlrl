@@ -95,8 +95,8 @@ public class Tag implements Serializable {
         '}';
   }
   
-  public static String toString(@NonNull Collection<Tag> tags) {
-    return tags.stream().map(Tag::toString)
+  public static String toString(Collection<Tag> tags) {
+    return tags == null ? "[]" : tags.stream().map(Tag::toString)
       .collect(Collectors.joining(","));
   }
 

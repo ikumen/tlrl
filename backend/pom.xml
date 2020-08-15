@@ -199,7 +199,7 @@
             <schema>public</schema>
           </schemas>
           <locations>
-            <location>filesystem:${project.basedir}/db/migrations</location>
+            <location>filesystem:${project.basedir}/db/postgresql/migrations</location>
           </locations>
           <placeholders>
             <dbAdmin>${dbAdmin}</dbAdmin>
