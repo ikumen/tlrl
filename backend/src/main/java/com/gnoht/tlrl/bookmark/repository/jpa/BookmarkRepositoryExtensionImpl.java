@@ -45,6 +45,14 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
 
   private EntityManager entityManager;
   private JPAQueryFactory jpaQueryFactory;
+  private final QBookmark _bookmark = QBookmark.bookmark;
+  private final QWebUrl _webUrl = QWebUrl.webUrl;
+  private final QUser _owner = QUser.user;
+  private final QTag _tag0 = new QTag("t0")
+      ,_tag1 = new QTag("t1")
+      ,_tag2 = new QTag("t2")
+      ,_tag3 = new QTag("t3")
+      ,_tag4 = new QTag("t4");
 
   @PersistenceContext
   public void setEntityManager(EntityManager entityManager) {
@@ -52,77 +60,66 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
     this.jpaQueryFactory = new JPAQueryFactory(entityManager);
   }
   
+  @Override
   public BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter) {
-    QBookmark _bookmark = QBookmark.bookmark;
     QTag _tag = QTag.tag;
     
-    JPAQuery<Long> findAllSubQuery = createFindAllQuery(user, queryFilter); 
+    JPAQuery<Long> findAllSubQuery = createFindAllQuery(user, queryFilter);
+    
+    BooleanBuilder excludeTagPredicate = new BooleanBuilder();
+    queryFilter.getTags().forEach(t -> excludeTagPredicate.and(_tag.id.id.ne(t.getId())));
     
     List<TagFacet> tags = jpaQueryFactory
-      .select(Projections
-          .constructor(TagFacet.class, 
-            Projections.constructor(Tag.class, _tag.id.id)
-            , _tag.id.id.count()))
+      .select(Projections.constructor(TagFacet.class, 
+          Projections.constructor(Tag.class, _tag.id.id), _tag.id.id.count()))
       .from(_tag, _bookmark)
       .where(_bookmark.eq(_tag.bookmark)
-          .and(_bookmark.id.in(findAllSubQuery)))
+          .and(_bookmark.id.in(findAllSubQuery))
+          .and(excludeTagPredicate))
       .groupBy(_tag.id.id)
       .orderBy(_tag.count().desc(), _tag.id.id.asc())
       .fetch();
-    
-    List<SharedStatusFacet> sharedStatuses = findAllSubQuery
-      .select(Projections
-          .constructor(SharedStatusFacet.class, 
-              _bookmark.sharedStatus, _bookmark.sharedStatus.count()))
+
+    List<SharedStatusFacet> sharedStatuses = findAllSubQuery.clone() // modifies state, make a clone
+      .select(Projections.constructor(SharedStatusFacet.class, 
+          _bookmark.sharedStatus, _bookmark.sharedStatus.count()))
       .groupBy(_bookmark.sharedStatus)
       .fetch();
       
-    List<ReadStatusFacet> readStatuses = findAllSubQuery
-      .select(Projections
-          .constructor(ReadStatusFacet.class, 
-              _bookmark.readStatus, _bookmark.readStatus.count()))
+    List<ReadStatusFacet> readStatuses = findAllSubQuery // modifies state as well, but last usage
+      .select(Projections.constructor(ReadStatusFacet.class, 
+          _bookmark.readStatus, _bookmark.readStatus.count()))
       .groupBy(_bookmark.readStatus)
+      .orderBy(_bookmark.readStatus.asc())
       .fetch();
     
     return new BookmarkFacets(tags, sharedStatuses, readStatuses);
-//    return new BookmarkFacets(tags, Collections.emptyList(), Collections.emptyList());
   }
   
-    
   @Override
   public Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable) {
-    QBookmark _bookmark = QBookmark.bookmark;
-    QWebUrl _webUrl = QWebUrl.webUrl;
-    QUser _owner = QUser.user;
-    QTag _tag0 = new QTag("t0")
-        ,_tag1 = new QTag("t1")
-        ,_tag2 = new QTag("t2")
-        ,_tag3 = new QTag("t3")
-        ,_tag4 = new QTag("t4");
     
     JPAQuery<Bookmark> findAllQuery = createFindAllQuery(user, queryFilter)
-        .select(Projections
-            .constructor(Bookmark.class,
-              _bookmark.id, 
-              Projections.constructor(User.class, _owner.id, _owner.name, _owner.email), 
-              Projections.constructor(WebUrl.class, _webUrl.id, _webUrl.url, _webUrl.createdDateTime), 
-              _bookmark.title, 
-              _bookmark.description, 
-              _bookmark.readStatus, 
-              _bookmark.sharedStatus, 
-              _bookmark.createdDateTime, 
-              _bookmark.updatedDateTime, 
-              _bookmark.archivedDateTime,
-              _bookmark.version,
-               Projections.constructor(Tag.class, _tag0.id.id).skipNulls(),
-               Projections.constructor(Tag.class, _tag1.id.id).skipNulls(),
-               Projections.constructor(Tag.class, _tag2.id.id).skipNulls(),
-               Projections.constructor(Tag.class, _tag3.id.id).skipNulls(),
-               Projections.constructor(Tag.class, _tag4.id.id).skipNulls())
-          );
+      .select(Projections.constructor(Bookmark.class,
+          _bookmark.id, 
+          Projections.constructor(User.class, _owner.id, _owner.name, _owner.email), 
+          Projections.constructor(WebUrl.class, _webUrl.id, _webUrl.url, _webUrl.createdDateTime), 
+          _bookmark.title, 
+          _bookmark.description, 
+          _bookmark.readStatus, 
+          _bookmark.sharedStatus, 
+          _bookmark.createdDateTime, 
+          _bookmark.updatedDateTime, 
+          _bookmark.archivedDateTime,
+          _bookmark.version,
+           Projections.constructor(Tag.class, _tag0.id.id).skipNulls(),
+           Projections.constructor(Tag.class, _tag1.id.id).skipNulls(),
+           Projections.constructor(Tag.class, _tag2.id.id).skipNulls(),
+           Projections.constructor(Tag.class, _tag3.id.id).skipNulls(),
+           Projections.constructor(Tag.class, _tag4.id.id).skipNulls()));
 
     List<Bookmark> bookmarks = findAllQuery
-        .orderBy(QBookmark.bookmark.createdDateTime.desc())
+        .orderBy(_bookmark.createdDateTime.desc())
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
       .fetch();
@@ -131,9 +128,8 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
         
     return new PageImpl<>(bookmarks, pageable, count);
   }
-
+  
   private Predicate buildFindAllWherePredicate(User user, BookmarkQueryFilter queryFilter) {
-    QBookmark _bookmark = QBookmark.bookmark;
     BooleanBuilder builder = new BooleanBuilder(_bookmark.owner.eq(user));
     queryFilter.getTags().forEach(tag -> 
       builder.and(_bookmark.tags.any().id.id.eq(tag.getId())));
@@ -144,16 +140,7 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
     return builder;
   }
   
-  private JPAQuery<Long> createFindAllQuery(User user, BookmarkQueryFilter queryFilter) {
-    QBookmark _bookmark = QBookmark.bookmark;
-    QWebUrl _webUrl = QWebUrl.webUrl;
-    QUser _owner = QUser.user;
-    QTag _tag0 = new QTag("t0")
-        ,_tag1 = new QTag("t1")
-        ,_tag2 = new QTag("t2")
-        ,_tag3 = new QTag("t3")
-        ,_tag4 = new QTag("t4");
-    
+  private JPAQuery<Long> createFindAllQuery(User user, BookmarkQueryFilter queryFilter) {    
     return jpaQueryFactory.
       select(_bookmark.id)
       .from(_bookmark)

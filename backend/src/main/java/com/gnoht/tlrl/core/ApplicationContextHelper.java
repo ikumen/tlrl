@@ -1,4 +1,4 @@
-package com.gnoht.tlrl.support;
+package com.gnoht.tlrl.core;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

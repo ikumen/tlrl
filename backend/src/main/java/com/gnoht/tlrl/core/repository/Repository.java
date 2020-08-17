@@ -1,4 +1,4 @@
-package com.gnoht.tlrl.core;
+package com.gnoht.tlrl.core.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,24 +19,10 @@ public interface Repository<T, ID> {
   <S extends T> S save(S entity);
 
   /**
-   * Save all given entities.
-   * @param entities
-   * @param <S>
-   * @return
-   */
-  <S extends T> Iterable<S> saveAll(Iterable<S> entities);
-
-  /**
    * Delete the given entity.
    * @param entity
    */
   void delete(T entity);
-
-  /**
-   * Delete all entities given.
-   * @param entities
-   */
-  void deleteAll(Iterable<? extends T> entities);
 
   /**
    * Return an entity with the given id.
@@ -57,4 +43,5 @@ public interface Repository<T, ID> {
    * @return
    */
   long count();
+  
 }

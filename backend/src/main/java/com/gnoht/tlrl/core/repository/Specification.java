@@ -1,4 +1,4 @@
-package com.gnoht.tlrl.support;
+package com.gnoht.tlrl.core.repository;
 
 /**
  * @author ikumen@gnoht.com

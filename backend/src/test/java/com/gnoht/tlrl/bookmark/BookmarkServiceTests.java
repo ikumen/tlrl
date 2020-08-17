@@ -1,6 +1,6 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.gnoht.tlrl.bookmark.jpa.JpaBookmarkRepository;
+import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkRepository;
 import com.gnoht.tlrl.user.User;
 import com.gnoht.tlrl.user.UserService;
 import org.junit.jupiter.api.BeforeEach;

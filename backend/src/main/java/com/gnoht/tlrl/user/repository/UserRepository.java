@@ -1,8 +1,9 @@
-package com.gnoht.tlrl.user;
-
-import com.gnoht.tlrl.core.Repository;
+package com.gnoht.tlrl.user.repository;
 
 import java.util.Optional;
+
+import com.gnoht.tlrl.core.repository.Repository;
+import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen@gnoht.com

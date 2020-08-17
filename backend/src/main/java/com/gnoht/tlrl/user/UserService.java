@@ -1,6 +1,8 @@
 package com.gnoht.tlrl.user;
 
 import com.gnoht.tlrl.security.Role;
+import com.gnoht.tlrl.user.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;

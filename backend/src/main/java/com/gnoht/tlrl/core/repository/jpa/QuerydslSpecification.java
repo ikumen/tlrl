@@ -1,9 +1,9 @@
 /**
  * 
  */
-package com.gnoht.tlrl.support.jpa;
+package com.gnoht.tlrl.core.repository.jpa;
 
-import com.gnoht.tlrl.support.Specification;
+import com.gnoht.tlrl.core.repository.Specification;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
