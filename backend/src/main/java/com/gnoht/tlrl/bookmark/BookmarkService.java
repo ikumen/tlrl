@@ -1,10 +1,13 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.gnoht.tlrl.bookmark.jpa.JpaBookmarkRepository;
-import com.gnoht.tlrl.bookmark.jpa.JpaWebUrlRepository;
+import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
+import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
+import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
+import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkRepository;
+import com.gnoht.tlrl.bookmark.repository.jpa.JpaWebUrlRepository;
 import com.gnoht.tlrl.core.AlreadyExistsException;
 import com.gnoht.tlrl.core.NotAuthorizedException;
-import com.gnoht.tlrl.support.Specification;
+import com.gnoht.tlrl.core.repository.Specification;
 import com.gnoht.tlrl.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,25 +158,15 @@ public class BookmarkService {
         status, owner, ids, LocalDateTime.now(ZoneOffset.UTC));
     verifyAndHandleUpdatedCount(updatedCount, ids);
   }
-  
+
   /**
    * 
    * @param user
    * @param criteria
    * @return
    */
-  public List<Tag> findAllRelatedTags(User user, BookmarkCriteria criteria) {
-    final BookmarkSpecifications specifications = bookmarkRepository.newSpecifications()
-      .isOwnedBy(user)
-      .notTaggedWith(criteria.getTags());
-    
-    criteria.getReadStatus().ifPresent(specifications::hasReadStatus);
-    criteria.getSharedStatus().ifPresent(s -> {
-      if (SharedStatus.PRIVATE == s) specifications.isPrivate();
-      else specifications.isPublic();
-    });
-    
-    return bookmarkRepository.findRelatedTags(user, specifications); 
+  public BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter) {
+    return bookmarkRepository.findAllFacets(user, queryFilter);
   }
 
   /**
@@ -183,18 +176,8 @@ public class BookmarkService {
    * @param pageable
    * @return
    */
-  public Page<Bookmark> findAll(User user, BookmarkCriteria criteria, Pageable pageable) {
-    final BookmarkSpecifications specifications = bookmarkRepository.newSpecifications()
-      .isOwnedBy(user)
-      .taggedWith(criteria.getTags());
-    
-    criteria.getReadStatus().ifPresent(specifications::hasReadStatus);
-    criteria.getSharedStatus().ifPresent(s -> {
-      if (SharedStatus.PRIVATE == s) specifications.isPrivate();
-      else specifications.isPublic();
-    });
-      
-    return bookmarkRepository.findAll(user, specifications, pageable);
+  public Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable) {
+    return bookmarkRepository.findAll(user, queryFilter, pageable);
   }
 
   private void verifyAndHandleUpdatedCount(int updatedCount, List<Long> ids) {

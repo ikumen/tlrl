@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-import org.springframework.lang.NonNull;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,18 +26,10 @@ public class Tag implements Serializable {
 
   private int pos;
 
-  @Transient
-  private long count;
-
   Tag() {/* For JPA */}
 
   public Tag(String id) {
     this.id = new TagId(id);
-  }
-
-  public Tag(String id, long count) {
-    this.id = new TagId(id);
-    this.count = count;
   }
 
   public Tag(String id, Bookmark bookmark, int pos) {
@@ -50,10 +40,6 @@ public class Tag implements Serializable {
 
   public String getId() {
     return id.id;
-  }
-
-  public long getCount() {
-    return count;
   }
 
   @JsonIgnore
@@ -84,20 +70,17 @@ public class Tag implements Serializable {
   public int hashCode() {
     return Objects.hash(id);
   }
-
-  @Override
-  public String toString() {
-    return "Tag {" +
-        "id='" + (id == null ? null : id.id) + '\'' +
-        ", bookmark=" + (bookmark == null ? "" : bookmark.getId())+
-        // ", pos=" + pos +
-        ", count=" + count +
-        '}';
-  }
   
   public static String toString(Collection<Tag> tags) {
     return tags == null ? "[]" : tags.stream().map(Tag::toString)
       .collect(Collectors.joining(","));
+  }
+
+  @Override
+  public String toString() {
+    return "Tag [id=" + (id == null ? "" : id.id) + 
+      ", bookmark=" + (bookmark == null ? "" : bookmark.getId()) + 
+      ", pos=" + pos + "]";
   }
 
   /**
@@ -110,7 +93,7 @@ public class Tag implements Serializable {
     private String id;
     private Long bookmarkId;
 
-    private TagId() {}
+    TagId() {/* For JPA */}
 
     public TagId(String id, Long bookmarkId) {
       this.id = id;

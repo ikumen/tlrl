@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gnoht.tlrl.bookmark.jpa.JpaBookmarkListener;
+import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkListener;
 import com.gnoht.tlrl.core.Constants;
 import com.gnoht.tlrl.user.User;
 import com.querydsl.core.annotations.QueryProjection;

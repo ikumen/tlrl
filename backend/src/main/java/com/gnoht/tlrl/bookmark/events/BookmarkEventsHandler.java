@@ -1,9 +1,8 @@
-package com.gnoht.tlrl.bookmark;
+package com.gnoht.tlrl.bookmark.events;
 
-import com.gnoht.tlrl.user.User;
-
-import java.util.Collection;
 import java.util.List;
+
+import com.gnoht.tlrl.bookmark.Bookmark;
 
 /**
  * @author ikumen@gnoht.com

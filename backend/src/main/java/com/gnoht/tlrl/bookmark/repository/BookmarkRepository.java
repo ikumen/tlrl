@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gnoht.tlrl.bookmark;
+package com.gnoht.tlrl.bookmark.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,29 +11,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gnoht.tlrl.support.Specification;
+import com.gnoht.tlrl.bookmark.Bookmark;
+import com.gnoht.tlrl.bookmark.BookmarkFacets;
+import com.gnoht.tlrl.bookmark.ReadStatus;
+import com.gnoht.tlrl.bookmark.SharedStatus;
+import com.gnoht.tlrl.bookmark.WebUrl;
+import com.gnoht.tlrl.core.repository.Repository;
+import com.gnoht.tlrl.core.repository.Specification;
 import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen
  */
-public interface BookmarkRepository {
-  
-  /**
-   * Save given {@link Bookmark} to the underlying data repository.
-   * 
-   * @param <S>
-   * @param entity
-   * @return
-   */
-  <S extends Bookmark> S save(S bookmark);
-
-  /**
-   * Find a {@link Bookmark} by the given id.
-   * @param id
-   * @return
-   */
-  Optional<Bookmark> findById(Long id);
+public interface BookmarkRepository extends Repository<Bookmark, Long> {
   
   /**
    * Find all {@link Bookmark}s belonging to given {@link User}, filtered by the given {@link Specification}.
@@ -43,7 +33,7 @@ public interface BookmarkRepository {
    * @param pageable
    * @return
    */
-  Page<Bookmark> findAll(User user, BookmarkSpecifications specifications, Pageable pageable);
+  Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable);
   
   /**
    * 
@@ -51,14 +41,8 @@ public interface BookmarkRepository {
    * @param specifications
    * @return
    */
-  List<Tag> findRelatedTags(User user, BookmarkSpecifications specifications);
+  BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter);
   
-  /**
-   * 
-   * @return
-   */
-  BookmarkSpecifications newSpecifications();
-
   /**
    * Find the {@link Bookmark} with given url and owner.
    *

@@ -1,4 +1,4 @@
-package com.gnoht.tlrl.bookmark.solr;
+package com.gnoht.tlrl.bookmark.repository.solr;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

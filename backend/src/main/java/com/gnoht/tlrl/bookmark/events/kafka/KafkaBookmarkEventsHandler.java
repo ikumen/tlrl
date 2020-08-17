@@ -1,8 +1,9 @@
 package com.gnoht.tlrl.bookmark.events.kafka;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.BookmarkEventsHandler;
 import com.gnoht.tlrl.bookmark.BookmarkService;
+import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,8 +1,9 @@
-package com.gnoht.tlrl.bookmark.jpa;
+package com.gnoht.tlrl.bookmark.repository.jpa;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.BookmarkEventsHandler;
-import com.gnoht.tlrl.support.ApplicationContextHelper;
+import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
+import com.gnoht.tlrl.core.ApplicationContextHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

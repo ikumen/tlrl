@@ -1,6 +1,6 @@
-package com.gnoht.tlrl.bookmark.solr;
+package com.gnoht.tlrl.bookmark.repository.solr;
 
-import static com.gnoht.tlrl.bookmark.solr.SolrBookmarkDocument.*;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

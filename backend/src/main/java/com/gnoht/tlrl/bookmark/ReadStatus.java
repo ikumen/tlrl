@@ -1,7 +1,5 @@
 package com.gnoht.tlrl.bookmark;
 
-import javax.persistence.EnumType;
-
 /**
  * The status indicating if a {@link Bookmark} should be read (e.g, reading list).
  *
@@ -24,4 +22,5 @@ public enum ReadStatus {
    * Status indicating Bookmark has been read.
    */
   READ;
+  
 }

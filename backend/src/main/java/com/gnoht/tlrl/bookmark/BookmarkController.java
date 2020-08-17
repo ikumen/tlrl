@@ -1,5 +1,6 @@
 package com.gnoht.tlrl.bookmark;
 
+import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
 import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
 import org.slf4j.Logger;
@@ -140,17 +141,21 @@ public class BookmarkController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<Bookmark>> findAll(@Valid BookmarkCriteria criteria, 
+  public ResponseEntity<Page<Bookmark>> findAll(@Valid BookmarkQueryFilter queryFilter, 
       @PageableDefault Pageable pageable, @AuthenticationPrincipal User user) {
-    LOG.info("findAll: critera={}", criteria);
-    Page<Bookmark> results = bookmarkService.findAll(user, criteria, pageable);
+    LOG.info("findAll: queryFilter={}", queryFilter);
+    Page<Bookmark> results = bookmarkService.findAll(user, queryFilter, pageable);
     return ResponseEntity.ok(results);
   }
   
-  @GetMapping("/tags")
-  public ResponseEntity<List<Tag>> findAllRelatedTags(
-      @Valid BookmarkCriteria criteria, @AuthenticationPrincipal User user) {
-    LOG.info("findRelatedTags: criteria={}", criteria);
-    return ResponseEntity.ok(bookmarkService.findAllRelatedTags(user, criteria));
+  @GetMapping("/facets")
+  public ResponseEntity<BookmarkFacets> findAllFacets(
+      @Valid BookmarkQueryFilter queryFilter, @AuthenticationPrincipal User user) {
+    LOG.info("findAllFacets: queryFilter={}", queryFilter);
+    if (queryFilter == null) {
+      System.out.println("facets was null");
+      queryFilter = new BookmarkQueryFilter();
+    }
+    return ResponseEntity.ok(bookmarkService.findAllFacets(user, queryFilter));
   }
 }

@@ -1,4 +1,4 @@
-package com.gnoht.tlrl.bookmark.jpa;
+package com.gnoht.tlrl.bookmark.repository.jpa;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.BookmarkRepository;
 import com.gnoht.tlrl.bookmark.ReadStatus;
 import com.gnoht.tlrl.bookmark.SharedStatus;
+import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
 import com.gnoht.tlrl.user.User;
 
 /**
@@ -19,11 +19,6 @@ import com.gnoht.tlrl.user.User;
  */
 public interface JpaBookmarkRepository extends JpaRepository<Bookmark, Long>, 
       BookmarkRepository, BookmarkRepositoryExtension {
-  
-  @Override
-  default QuerydslBookmarkSpecifications newSpecifications() {
-    return QuerydslBookmarkSpecifications.get();
-  }
   
   /**
    * Update the {@link ReadStatus} for all {@link Bookmark}s in given list and

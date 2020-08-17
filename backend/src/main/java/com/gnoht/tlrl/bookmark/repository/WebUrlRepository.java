@@ -1,6 +1,8 @@
-package com.gnoht.tlrl.bookmark;
+package com.gnoht.tlrl.bookmark.repository;
 
 import java.util.Optional;
+
+import com.gnoht.tlrl.bookmark.WebUrl;
 
 /**
  * @author ikumen@gnoht.com

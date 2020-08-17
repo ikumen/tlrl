@@ -1,7 +1,8 @@
-package com.gnoht.tlrl.bookmark.jpa;
+package com.gnoht.tlrl.bookmark.repository.jpa;
 
 import com.gnoht.tlrl.bookmark.WebUrl;
-import com.gnoht.tlrl.bookmark.WebUrlRepository;
+import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
