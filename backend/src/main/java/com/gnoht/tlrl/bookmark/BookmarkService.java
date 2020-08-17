@@ -1,14 +1,13 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
-import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
-import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
-import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkRepository;
-import com.gnoht.tlrl.bookmark.repository.jpa.JpaWebUrlRepository;
-import com.gnoht.tlrl.core.AlreadyExistsException;
-import com.gnoht.tlrl.core.NotAuthorizedException;
-import com.gnoht.tlrl.core.repository.Specification;
-import com.gnoht.tlrl.user.User;
+import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,12 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
+import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
+import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
+import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
+import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkRepository;
+import com.gnoht.tlrl.core.AlreadyExistsException;
+import com.gnoht.tlrl.core.NotAuthorizedException;
+import com.gnoht.tlrl.user.User;
 
 /**
  * {@link BookmarkService} implementation that delegates core CRUD operations

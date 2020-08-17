@@ -1,13 +1,20 @@
 package com.gnoht.tlrl.bookmark.repository.jpa;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.gnoht.tlrl.bookmark.Bookmark;
 import com.gnoht.tlrl.bookmark.BookmarkFacets;
 import com.gnoht.tlrl.bookmark.QBookmark;
 import com.gnoht.tlrl.bookmark.QTag;
 import com.gnoht.tlrl.bookmark.QWebUrl;
-import com.gnoht.tlrl.bookmark.ReadStatus;
 import com.gnoht.tlrl.bookmark.ReadStatusFacet;
-import com.gnoht.tlrl.bookmark.SharedStatus;
 import com.gnoht.tlrl.bookmark.SharedStatusFacet;
 import com.gnoht.tlrl.bookmark.Tag;
 import com.gnoht.tlrl.bookmark.TagFacet;
@@ -16,27 +23,10 @@ import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
 import com.gnoht.tlrl.user.QUser;
 import com.gnoht.tlrl.user.User;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author ikumen@gnoht.com

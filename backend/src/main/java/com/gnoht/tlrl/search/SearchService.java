@@ -2,10 +2,10 @@ package com.gnoht.tlrl.search;
 
 import java.util.Map;
 
-import com.gnoht.tlrl.user.User;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import com.gnoht.tlrl.user.User;
 
 /**
  * @param <T>

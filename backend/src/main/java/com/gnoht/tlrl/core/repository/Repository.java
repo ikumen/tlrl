@@ -1,9 +1,9 @@
 package com.gnoht.tlrl.core.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 /**
  * @author ikumen@gnoht.com

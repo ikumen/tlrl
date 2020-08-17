@@ -1,19 +1,19 @@
 package com.gnoht.tlrl.user;
 
-import com.gnoht.tlrl.security.Role;
-import com.gnoht.tlrl.user.repository.UserRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.gnoht.tlrl.security.Role;
+import com.gnoht.tlrl.user.repository.UserRepository;
 
 /**
  * @author ikumen@gnoht.com

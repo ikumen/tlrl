@@ -1,15 +1,14 @@
 package com.gnoht.tlrl.user.repository.jpa;
 
-import com.gnoht.tlrl.user.User;
-import com.gnoht.tlrl.user.UsernameAlreadyExistsException;
-import com.gnoht.tlrl.user.repository.UserRepository;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.gnoht.tlrl.user.User;
+import com.gnoht.tlrl.user.repository.UserRepository;
 
 /**
  * @author ikumen@gnoht.com

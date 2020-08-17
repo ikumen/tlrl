@@ -1,8 +1,12 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
-import com.gnoht.tlrl.search.SearchService;
-import com.gnoht.tlrl.user.User;
+import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,18 +14,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import java.lang.invoke.MethodHandles;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
+import com.gnoht.tlrl.search.SearchService;
+import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen@gnoht.com

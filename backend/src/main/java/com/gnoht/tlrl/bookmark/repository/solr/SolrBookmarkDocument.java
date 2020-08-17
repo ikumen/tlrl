@@ -6,14 +6,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.beans.Field;
+
 import com.gnoht.tlrl.bookmark.Bookmark;
 import com.gnoht.tlrl.bookmark.ReadStatus;
 import com.gnoht.tlrl.bookmark.SharedStatus;
 import com.gnoht.tlrl.bookmark.Tag;
 import com.gnoht.tlrl.bookmark.WebUrl;
 import com.gnoht.tlrl.user.User;
-
-import org.apache.solr.client.solrj.beans.Field;
 
 /**
  * 

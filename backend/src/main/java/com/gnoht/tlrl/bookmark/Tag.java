@@ -1,13 +1,18 @@
 package com.gnoht.tlrl.bookmark;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author ikumen@gnoht.com

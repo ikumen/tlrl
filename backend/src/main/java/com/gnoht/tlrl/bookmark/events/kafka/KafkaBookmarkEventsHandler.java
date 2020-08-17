@@ -1,8 +1,10 @@
 package com.gnoht.tlrl.bookmark.events.kafka;
 
-import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.BookmarkService;
-import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
+import java.lang.invoke.MethodHandles;
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +13,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
-import java.lang.invoke.MethodHandles;
-import java.util.Collections;
-import java.util.List;
+import com.gnoht.tlrl.bookmark.Bookmark;
+import com.gnoht.tlrl.bookmark.BookmarkService;
+import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
 
 /**
  * @author ikumen@gnoht.com

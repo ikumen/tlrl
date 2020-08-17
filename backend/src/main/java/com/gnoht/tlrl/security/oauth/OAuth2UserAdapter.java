@@ -2,13 +2,11 @@ package com.gnoht.tlrl.security.oauth;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gnoht.tlrl.security.Role;
 import com.gnoht.tlrl.user.User;
 
 /**

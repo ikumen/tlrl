@@ -1,7 +1,5 @@
 package com.gnoht.tlrl.core;
 
-import java.util.function.Supplier;
-
 /**
  * @author ikumen@gnoht.com
  */

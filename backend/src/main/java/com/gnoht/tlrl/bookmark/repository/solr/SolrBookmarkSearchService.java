@@ -1,15 +1,22 @@
 package com.gnoht.tlrl.bookmark.repository.solr;
 
-import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.*;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.ARCHIVED_DT_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.CREATED_DT_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.DESCRIPTION_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.ID_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.OWNER_ID_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.OWNER_NAME_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.READ_STATUS_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.SHARED_STATUS_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.TAGS_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.TITLE_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.URL_FLD;
+import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.WEB_URL_ID_FLD;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.search.SearchService;
-import com.gnoht.tlrl.user.User;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -19,6 +26,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.gnoht.tlrl.bookmark.Bookmark;
+import com.gnoht.tlrl.search.SearchService;
+import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen@gnoht.com

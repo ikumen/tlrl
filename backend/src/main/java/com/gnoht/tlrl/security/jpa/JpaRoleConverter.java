@@ -2,6 +2,7 @@ package com.gnoht.tlrl.security.jpa;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+
 import com.gnoht.tlrl.security.Role;
 
 /**

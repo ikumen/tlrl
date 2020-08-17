@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.gnoht.tlrl.web.SpaEntryController;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +17,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 import com.gnoht.tlrl.user.User;
+import com.gnoht.tlrl.web.SpaEntryController;
 
 /**
  * Handle {@link User}s that belong to {@link Role#ROLE_UNCONFIRMED}. Users that 

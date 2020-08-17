@@ -1,17 +1,18 @@
 package com.gnoht.tlrl.bookmark.repository.jpa;
 
-import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
-import com.gnoht.tlrl.core.ApplicationContextHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
-import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.gnoht.tlrl.bookmark.Bookmark;
+import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
+import com.gnoht.tlrl.core.ApplicationContextHelper;
 
 /**
  * Listen for {@link Bookmark} persistence events, and map them to {@link BookmarkEventsHandler}.

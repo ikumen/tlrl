@@ -2,8 +2,6 @@ package com.gnoht.tlrl.user;
 
 import com.gnoht.tlrl.core.AlreadyExistsException;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @author ikumen@gnoht.com
  */
