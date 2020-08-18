@@ -17,4 +17,9 @@ public enum SharedStatus {
    * Status indicating Bookmark can be shared.
    */
   PUBLIC;
+
+  @Override
+  public String toString() {
+    return name().toLowerCase();
+  }
 }

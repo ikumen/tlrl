@@ -22,5 +22,9 @@ public enum ReadStatus {
    * Status indicating Bookmark has been read.
    */
   READ;
-  
+
+  @Override
+  public String toString() {
+    return name().toLowerCase();
+  }
 }
