@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author ikumen@gnoht.com
@@ -29,6 +30,7 @@ public class Tag implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   private Bookmark bookmark;
 
+  @JsonIgnore
   private int pos;
 
   Tag() {/* For JPA */}
@@ -43,6 +45,7 @@ public class Tag implements Serializable {
     this.bookmark = bookmark;
   }
 
+  @JsonProperty
   public String getId() {
     return id.id;
   }
@@ -83,7 +86,7 @@ public class Tag implements Serializable {
 
   @Override
   public String toString() {
-    return "Tag [id=" + (id == null ? "" : id.id) + 
+    return "Tag [help=" + (id == null ? "" : id.id) + 
       ", bookmark=" + (bookmark == null ? "" : bookmark.getId()) + 
       ", pos=" + pos + "]";
   }

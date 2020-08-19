@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
 import com.gnoht.tlrl.bookmark.BookmarkFacets;
+import com.gnoht.tlrl.bookmark.BookmarkResults;
 import com.gnoht.tlrl.bookmark.ReadStatus;
 import com.gnoht.tlrl.bookmark.SharedStatus;
 import com.gnoht.tlrl.bookmark.WebUrl;
@@ -33,7 +34,7 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
    * @param pageable
    * @return
    */
-  Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable);
+  Page<Bookmark> findAll(BookmarkQueryFilter queryFilter, Pageable pageable);
   
   /**
    * 
@@ -41,7 +42,15 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
    * @param specifications
    * @return
    */
-  BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter);
+  BookmarkResults findAllWithFacets(BookmarkQueryFilter queryFilter, Pageable pageable);
+  
+  /**
+   * 
+   * @param user
+   * @param specifications
+   * @return
+   */
+  BookmarkFacets findAllFacets(BookmarkQueryFilter queryFilter);
   
   /**
    * Find the {@link Bookmark} with given url and owner.

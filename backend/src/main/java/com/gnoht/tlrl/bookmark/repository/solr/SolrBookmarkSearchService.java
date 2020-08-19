@@ -15,19 +15,34 @@ import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.WEB_U
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.FacetParams;
+import org.apache.solr.common.params.SolrParams;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
+import com.gnoht.tlrl.bookmark.BookmarkFacets;
+import com.gnoht.tlrl.bookmark.BookmarkFacets.TagFacet;
+import com.gnoht.tlrl.bookmark.BookmarkResults;
+import com.gnoht.tlrl.bookmark.ReadStatus;
+import com.gnoht.tlrl.bookmark.SharedStatus;
+import com.gnoht.tlrl.bookmark.Tag;
+import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
+import com.gnoht.tlrl.core.TlrlException;
 import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
 
@@ -35,26 +50,31 @@ import com.gnoht.tlrl.user.User;
  * @author ikumen@gnoht.com
  */
 @Service
-public class SolrBookmarkSearchService implements SearchService<Bookmark> {
+public class SolrBookmarkSearchService implements SearchService<BookmarkResults, BookmarkQueryFilter> {
+  static final String FQ_FORMAT = "%s:%s";
   private SolrClient solrClient;
 
   public SolrBookmarkSearchService(SolrClient solrClient) {
     this.solrClient = solrClient;
   }
   
-  protected String[] buildQueryFilters(Map<String, Object> filters) {
-    return filters.entrySet().stream().map(e -> 
-        String.format("%s:%s", e.getKey(), e.getValue()))
-      .toArray(String[]::new);
-  }
-
-  public Page<Bookmark> search(String terms, Map<String, Object> filters, User user, Pageable pageable) {
-    filters.put(SolrBookmarkDocument.OWNER_ID_FLD, user.getId());
-    return search(terms, filters, pageable);
+  private String buildFilterQuery(String field, String value) {
+    return String.format(FQ_FORMAT, field, value);
   }
   
-  public Page<Bookmark> search(String terms, Map<String, Object> filters, Pageable pageable) {
-    final List<Bookmark> bookmarks = new ArrayList<>();
+  protected void applyQueryFilters(SolrQuery solrQuery, BookmarkQueryFilter queryFilter) {
+    queryFilter.getOwner().ifPresent(owner -> 
+      solrQuery.addFilterQuery(buildFilterQuery(OWNER_ID_FLD, owner.getId().toString())));
+    queryFilter.getReadStatus().ifPresent(status ->
+      solrQuery.addFilterQuery(buildFilterQuery(READ_STATUS_FLD, status.name())));
+    queryFilter.getSharedStatus().ifPresent(status ->
+      solrQuery.addFilterQuery(buildFilterQuery(SHARED_STATUS_FLD, status.name())));
+    queryFilter.getTags().forEach(tag ->
+      solrQuery.addFilterQuery(buildFilterQuery(TAGS_FLD, tag.getId())));
+  }
+
+  @Override
+  public BookmarkResults search(String terms, BookmarkQueryFilter queryFilter, Pageable pageable) {
     final SolrQuery solrQuery = terms == null || "".equals(terms)
         ? new SolrQuery("*:*") 
         : new SolrQuery(terms);
@@ -72,19 +92,46 @@ public class SolrBookmarkSearchService implements SearchService<Bookmark> {
       .addField(SHARED_STATUS_FLD)
       .addField(TITLE_FLD);
 
-    if (!filters.isEmpty()) {
-      solrQuery.addFilterQuery(buildQueryFilters(filters));
-    }
+    applyQueryFilters(solrQuery, queryFilter);
+    solrQuery.addFacetField(TAGS_FLD, READ_STATUS_FLD, SHARED_STATUS_FLD);
+    solrQuery.set(CommonParams.START, pageable.getPageNumber() * pageable.getPageSize());
+    solrQuery.set(CommonParams.ROWS, pageable.getPageSize());
+    solrQuery.setFacetMinCount(1); // show only related tags for given filters
+    solrQuery.set(FacetParams.FACET_EXCLUDETERMS, queryFilter.getTags().stream()
+      .map(Tag::getId)
+      .collect(Collectors.joining(",")));
       
+    BookmarkFacets facets = new BookmarkFacets();
+    final List<Bookmark> bookmarks = new ArrayList<>();
     try {
       QueryResponse resp = solrClient.query(solrQuery);
+      List<FacetField> fields = resp.getFacetFields();
+      if (fields != null) {
+        fields.forEach(field -> {
+          String fieldName = field.getName();
+          if (fieldName.equals(TAGS_FLD)) {
+            field.getValues().forEach(t -> facets.getTags()
+                .add(new TagFacet(new Tag(t.getName()), t.getCount())));            
+          } else if (fieldName.equals(READ_STATUS_FLD)) {
+            field.getValues().forEach(s -> facets.getReadStatuses()
+                .put(ReadStatus.valueOf(s.getName()), s.getCount()));
+          } else if (fieldName.equals(SHARED_STATUS_FLD)) {
+            field.getValues().forEach(s -> facets.getSharedStatuses()
+                .put(SharedStatus.valueOf(s.getName()), s.getCount()));
+          }
+        });
+      }
+      
       for (SolrBookmarkDocument doc : resp.getBeans(SolrBookmarkDocument.class)) {
         bookmarks.add(doc.toBookmark());
       }
+      
+      return new BookmarkResults(new PageImpl<>(
+        bookmarks, pageable, resp.getResults().getNumFound()), facets);
+      
     } catch (IOException|SolrServerException e) {
-      e.printStackTrace();
+      throw new TlrlException(e);
     }
-    return new PageImpl<>(bookmarks);
   }
   
 }

@@ -24,6 +24,11 @@ spring:
           github:
             client-id: 
             client-secret: 
+  jackson:
+    serialization:
+      WRITE_ENUMS_USING_TO_STRING: true
+    deserialization:
+      READ_ENUMS_USING_TO_STRING: true
 
 app:
   kafka:

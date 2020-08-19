@@ -8,14 +8,15 @@ import org.springframework.data.domain.Pageable;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
 import com.gnoht.tlrl.bookmark.BookmarkFacets;
+import com.gnoht.tlrl.bookmark.BookmarkResults;
 import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
-import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen
  */
 public interface BookmarkRepositoryExtension {
   
-  BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter);
-  Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable);
+  BookmarkFacets findAllFacets(BookmarkQueryFilter queryFilter);
+  BookmarkResults findAllWithFacets(BookmarkQueryFilter queryFilter, Pageable pageable);
+  Page<Bookmark> findAll(BookmarkQueryFilter queryFilter, Pageable pageable);
 }

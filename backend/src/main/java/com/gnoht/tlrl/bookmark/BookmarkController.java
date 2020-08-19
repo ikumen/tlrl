@@ -1,7 +1,6 @@
 package com.gnoht.tlrl.bookmark;
 
 import java.lang.invoke.MethodHandles;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,7 +26,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
-import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
 
 /**
@@ -39,19 +37,10 @@ public class BookmarkController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private BookmarkService bookmarkService;
-  private SearchService<Bookmark> searchService;
 
   @Inject
-  public BookmarkController(BookmarkService bookmarkService, SearchService<Bookmark> searchService) {
+  public BookmarkController(BookmarkService bookmarkService) {
     this.bookmarkService = bookmarkService;
-    this.searchService = searchService;
-  }
-
-  @GetMapping(path = "/search")
-  public ResponseEntity<Page<Bookmark>> search(@RequestParam(name = "q") String terms,
-      @PageableDefault Pageable pageable, @AuthenticationPrincipal User user) {
-    LOG.info("Searching for: {}", terms);
-    return ResponseEntity.ok(searchService.search(terms, new HashMap<String, Object>(), user, pageable));
   }
 
   /**
@@ -156,13 +145,26 @@ public class BookmarkController {
   }
   
   @GetMapping("/facets")
-  public ResponseEntity<BookmarkFacets> findAllFacets(
-      @Valid BookmarkQueryFilter queryFilter, @AuthenticationPrincipal User user) {
+  public ResponseEntity<BookmarkResults> findAllWithFacets(
+      @Valid BookmarkQueryFilter queryFilter, 
+      @PageableDefault Pageable pageable,
+      @AuthenticationPrincipal User user) {
     LOG.info("findAllFacets: queryFilter={}", queryFilter);
     if (queryFilter == null) {
       System.out.println("facets was null");
       queryFilter = new BookmarkQueryFilter();
     }
-    return ResponseEntity.ok(bookmarkService.findAllFacets(user, queryFilter));
+    return ResponseEntity.ok(bookmarkService.findAllWithFacets(user, queryFilter, pageable));
   }
+
+  @GetMapping(path = "/search")
+  public ResponseEntity<BookmarkResults> searchAllWithFacets(
+      @RequestParam(name = "q", required = false, defaultValue = "") String terms,
+      @Valid BookmarkQueryFilter queryFilter, @PageableDefault Pageable pageable, 
+      @AuthenticationPrincipal User user) {
+    LOG.info("Searching for: {}", terms);
+    return ResponseEntity.ok(bookmarkService
+        .searchAllWithFacets(terms, user, queryFilter, pageable));
+  }
+
 }

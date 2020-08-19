@@ -21,6 +21,7 @@ import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
 import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkRepository;
 import com.gnoht.tlrl.core.AlreadyExistsException;
 import com.gnoht.tlrl.core.NotAuthorizedException;
+import com.gnoht.tlrl.search.SearchService;
 import com.gnoht.tlrl.user.User;
 
 /**
@@ -36,10 +37,12 @@ public class BookmarkService {
 
   private BookmarkRepository bookmarkRepository;
   private WebUrlRepository webUrlRepository;
+  private SearchService<BookmarkResults, BookmarkQueryFilter> searchService;
 
   @Inject
-  public BookmarkService(
+  public BookmarkService(SearchService<BookmarkResults, BookmarkQueryFilter> searchService,
       BookmarkRepository bookmarkRepository, WebUrlRepository webUrlRepository) {
+    this.searchService = searchService;
     this.bookmarkRepository = bookmarkRepository;
     this.webUrlRepository = webUrlRepository;
   }
@@ -165,8 +168,9 @@ public class BookmarkService {
    * @param criteria
    * @return
    */
-  public BookmarkFacets findAllFacets(User user, BookmarkQueryFilter queryFilter) {
-    return bookmarkRepository.findAllFacets(user, queryFilter);
+  public BookmarkResults findAllWithFacets(User user, BookmarkQueryFilter queryFilter, Pageable pageable) {
+    queryFilter.setOwner(Optional.of(user));
+    return bookmarkRepository.findAllWithFacets(queryFilter, pageable);
   }
 
   /**
@@ -177,7 +181,21 @@ public class BookmarkService {
    * @return
    */
   public Page<Bookmark> findAll(User user, BookmarkQueryFilter queryFilter, Pageable pageable) {
-    return bookmarkRepository.findAll(user, queryFilter, pageable);
+    queryFilter.setOwner(Optional.of(user));
+    return bookmarkRepository.findAll(queryFilter, pageable);
+  }
+
+  /**
+   * 
+   * @param terms
+   * @param user
+   * @param queryFilters
+   * @param pageable
+   * @return
+   */
+  public BookmarkResults searchAllWithFacets(String terms, User user, BookmarkQueryFilter queryFilters, Pageable pageable) {
+    queryFilters.setOwner(Optional.of(user));
+    return searchService.search(terms, queryFilters, pageable);
   }
 
   private void verifyAndHandleUpdatedCount(int updatedCount, List<Long> ids) {
