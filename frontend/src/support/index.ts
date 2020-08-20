@@ -1,8 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
+const parsedQueryStringCache = new Map<string, Map<string, string>>();
 /** Parse given querystring (e.g, some/url?param=1) to dictionary of key/values */
 export function parseQueryString(qs: string): Map<string, string> {
-  return (qs || '')
+  if (!parsedQueryStringCache.has(qs)) {
+    parsedQueryStringCache.set(qs, (qs || '')
     .substr(1)    // skip the ?
     .split('&')   // tokenize into name=value pairs
     .map(s => decodeURI(s))   // decode any values that have been encoded
@@ -12,7 +14,15 @@ export function parseQueryString(qs: string): Map<string, string> {
       const [ key, value ] = s.split('=');
       map.set(key, value);
       return map;
-    }, new Map<string, string>());
+    }, new Map<string, string>()));
+  }
+  return parsedQueryStringCache.get(qs)!;
+}
+
+export function paramsToQueryString(params: Map<string, any>) {
+  const qs: string[] = [];
+  params.forEach((v,k) => { if (v) qs.push(`${k}=${v}`); });    
+  return qs.join("&");
 }
 
 export const getCookies = () => {

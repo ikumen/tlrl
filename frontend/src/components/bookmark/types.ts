@@ -6,14 +6,14 @@ export interface WebUrl {
 }
 
 export enum ReadStatus {
-  NA = 'NA', 
-  READ = 'READ', 
-  UNREAD = 'UNREAD',
+  NA = 'na', 
+  READ = 'read', 
+  UNREAD = 'unread',
 }
 
 export enum SharedStatus {
-  PRIVATE = 'PRIVATE',
-  PUBLIC = 'PUBLIC'
+  PRIVATE = 'private',
+  PUBLIC = 'public'
 }
 
 export type Tag = {

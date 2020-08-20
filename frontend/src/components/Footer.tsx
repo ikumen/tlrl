@@ -10,7 +10,7 @@ function Footer() {
     <div className="fl w-100 pt3 pb3 ph1 ph3-m ph6-l flex items-center gray bt b--light-gray">
       <div className="w-20 fl f7 nowrap">&copy; <a href="//github.com/ikumen" className="link">Thong Nguyen</a></div>
       <div className="w-80 tr f6">
-        <a className="ml3 link" href="//github.com/tlrl/tlrl-app">about</a>        
+        <a className="ml3 link" href="//github.com/ikumen/tlrl">about</a>        
         { authState.status === AuthStatus.AUTHENTICATED
           ? <>
             <Link className="ml3 link" to={'/help'}>help</Link>

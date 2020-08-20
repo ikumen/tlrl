@@ -6,19 +6,21 @@ import { useLocation } from 'react-router-dom';
 
 function Search() {
   const location = useLocation();
+  const params = parseQueryString(location.search);
   const ctx = useContext(Bookmark.BookmarkContext);
-  
   useEffect(() => {
-    const params = parseQueryString(location.search);
-    const page = params.has('page') ? Number(params.get('page')) : 0;
-    ctx.search!((params.get('terms') || ''), {page});
+    ctx.get!(`/search${location.search}`);
   }, [location]);
 
+  const terms = params.get('terms');
   return <>
+    <div className="f4 fw5 mb2">Search Results {terms ? `"${terms}"`: ``}</div>
     {ctx.bookmarks && ctx.bookmarks.length 
-      ? <><Bookmark.BookmarkList bookmarks={ctx.bookmarks} />
-          <Pagination {...ctx.pagingDetails!} /></>
-      : <div className="fl w-100 pv4 ph1 tc">No results found for "{parseQueryString(location.search).get('terms')}"</div>
+      ? <>
+          <Bookmark.BookmarkList bookmarks={ctx.bookmarks} total={ctx.pagingDetails?.total || 0} />
+          <Pagination {...ctx.pagingDetails!} />
+        </>
+      : <div className="fl w-100 pv3 ph1 tc">No results found for "{parseQueryString(location.search).get('terms')}"</div>
     }
   </>;
 }

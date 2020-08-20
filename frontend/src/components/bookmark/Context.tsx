@@ -8,8 +8,8 @@ import { PagingDetails } from '../Pagination';
 type BookmarkContextType = {
   pagingDetails: PagingDetails,
   bookmarks: Bookmark[],
-  all: (opts?: {page: number}) => Promise<any>,
-  search: (terms: string, opts: {page: number}) => Promise<any>,
+  facets: Facets,
+  get: (url: string) => Promise<any>,
   create: (partial: Partial<Bookmark>) => Promise<Bookmark>,
   update: (partial: Partial<Bookmark>) => Promise<Partial<Bookmark>|undefined>,
   deleteAll: (ids: number[]) => Promise<number[]>,
@@ -17,10 +17,16 @@ type BookmarkContextType = {
   readStatus: (ids: number[], status: ReadStatus) => Promise<number[]>
 }
 
+type Facets = {
+  tags: {id: string, count: number}[],
+  sharedStatuses: {[key: string]: number},
+  readStatuses: {[key: string]: number}
+}
 const BookmarkContext = React.createContext<Partial<BookmarkContextType>>({bookmarks: []})
 
 export function Provider({children}: PropsWithChildren<any>) {
   const [ bookmarks, setBookmarks ] = useState<Bookmark[]>([]);
+  const [ facets, setFacets ] = useState<Facets>({tags: [], sharedStatuses: {}, readStatuses: {}});
   const [ pagingDetails, setPagingDetails ] = useState<PagingDetails>({first: false, last: false, page: 0, size: 10, total: 0});
   const authContext = useContext(AuthContext);
   const api = useFetch({authContext, baseUrl: '/api/bookmarks'});
@@ -28,13 +34,19 @@ export function Provider({children}: PropsWithChildren<any>) {
   const handleResults = async (resp: Response) => {
     if (!resp.ok) return;
     const results = await resp.json();
-    setBookmarks(results.content);
+    setBookmarks(results.bookmarks);
+    setFacets({
+      tags: results.facets.tags,
+      sharedStatuses: {'private': 0, 'public': 0, ...results.facets.sharedStatuses},
+      readStatuses: {'na': 0, 'unread': 0, 'read': 0, ...results.facets.readStatuses}
+    });
+
     setPagingDetails({
       first: results.first, 
       last: results.last,
-      page: results.number,
+      page: results.page,
       size: results.size,
-      total: results.totalElements
+      total: results.total
     });
     return results;
   }
@@ -42,17 +54,8 @@ export function Provider({children}: PropsWithChildren<any>) {
   const defaultContext: BookmarkContextType = {
     pagingDetails,
     bookmarks,
-    /**
-     * Return all Bookmarks for the currently authenticated user.
-     */
-    all: (opts: {page: number} = {page: 0}) => 
-      api.get(`?page=${opts.page}`).then(handleResults),
-    /**
-     * Search Bookmarks for content that matches given terms. 
-     */
-    search: (terms: string, opts: {page: number} = {page: 0}) => 
-      api.get(`/search?q=${terms ? terms.trim() : ''}&page=${opts.page}`).then(handleResults)
-    ,
+    facets,
+    get: (url) => api.get(`${url}`).then(handleResults),
     /**
      * Create the given Bookmark.
      * @param partial {@link Partial<Bookmark>} with attributes to save.

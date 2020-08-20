@@ -1,4 +1,4 @@
-import { defaultHeaders, useAsyncError, noOp } from './index';
+import { defaultHeaders, useAsyncError } from './index';
 import { AuthContextType } from '../auth';
 
 type Opts = {

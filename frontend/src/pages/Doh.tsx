@@ -10,14 +10,14 @@ type ErrorProp = {
 
 function Doh({ error, clearError }: {error: ErrorProp, clearError: Function}) {
   const location = useLocation<{status: number, url: string, message: string}>();
-  const authenticated = error.authState!.status === AuthStatus.AUTHENTICATED;
+  const authenticated = !error.authState || error.authState!.status === AuthStatus.AUTHENTICATED;
   const clear = () => clearError();
 
   return <>
     <header className={`fl cf w-100 pv2 ph1 ph3-m ph6-l bg-washed-yellow`} id="header">
       <div className="fl dib w-10 nowrap pointer">
         <Link to={location} onClick={clear} tabIndex={1}>
-          <i className="material-icons md-large orange v-mid">bookmark_border</i><span className="dib-m dib-l fw6 f6 orange">TLRL</span>
+          <i className="material-icons md-lg orange v-mid">bookmark_border</i><span className="dib-m dib-l fw6 f6 orange">TLRL</span>
         </Link>
       </div>
     </header> 
