@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { BookmarkContext } from './bookmark';
+import * as Bookmark from '../components/bookmark';
 import { AuthContext, AuthStatus } from '../auth';
 
 const buttonStyle = "pv1 ph2 ph3-l f6 ml1 tab bw0 br1 pointer fw3 white";
@@ -8,7 +8,7 @@ const buttonStyle = "pv1 ph2 ph3-l f6 ml1 tab bw0 br1 pointer fw3 white";
 function SearchOrAddForm() {
   const history = useHistory();
   const authContext = useContext(AuthContext);
-  const bookmarkContext = useContext(BookmarkContext);
+  const ctx = useContext(Bookmark.BookmarkContext);
   const [ urlOrTerm, setUrlOrTerm ] = useState<string>();
   const inputRef = React.createRef<HTMLInputElement>();
   
@@ -22,8 +22,7 @@ function SearchOrAddForm() {
     if (!urlOrTerm) {
       alert('Please enter a url to bookmark.')
     } else {
-      bookmarkContext.create!({webUrl: {url: urlOrTerm}})
-        .then(clearInput);
+      ctx.create!({webUrl: {url: urlOrTerm}}).then(clearInput);
     }
   }
 
@@ -49,19 +48,19 @@ function SearchOrAddForm() {
         onChange={onUrlOrTermChange}
       />
 
-      <div className="dib nowrap">
+      <div className="dib nowrap w-20-l tl">
         <button id="search-btn" type="submit" 
           className={`b--blue bg-blue ${buttonStyle}`} 
           tabIndex={3}
           >Search</button>
 
-        {authContext.authState.status === AuthStatus.AUTHENTICATED &&
+        {/* {authContext.authState.status === AuthStatus.AUTHENTICATED &&
         <button id="add-page-btn" type="button" 
           className={`b--green bg-green ${buttonStyle}`} 
           onClick={handleAdd}
           tabIndex={4}>
             Add
-        </button>}
+        </button>} */}
       </div>
     </form>
   );

@@ -15,7 +15,7 @@ function Main() {
           <Route component={Bookmarks} />
         </Switch>
       </div>
-      <div className="fl w-20 pl3">
+      <div className="fl w-20 pl3 dn db-l">
         <Facets />
       </div>
       </Bookmark.Provider>  

@@ -1,5 +1,6 @@
 import React from 'react';
 import SearchOrAddForm from './SearchOrAddForm';
+import * as Bookmark from '../components/bookmark';
 import { Link  } from 'react-router-dom';
 
 type Props = {
@@ -15,7 +16,9 @@ function Header(props: Props) {
         <i className="material-icons md-lg orange v-mid">bookmark_border</i><span className="dib-m dib-l fw6 f6 orange">TLRL</span>
         </Link>
       </div>
-      <SearchOrAddForm />
+      <Bookmark.Provider>
+        <SearchOrAddForm />
+      </Bookmark.Provider>
     </header> 
   );
 }
