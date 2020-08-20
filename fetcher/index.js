@@ -12,6 +12,7 @@ const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl-fetcher';
 const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 // NOTHING=0, ERROR=1, WARN=2, INFO=4, DEBUG=5
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
+const timeout = process.env.TIMEOUT || 90000;
 // Where we should archive PDF and mhtml files to
 const archiveDir = process.env.FETCHER_ARCHIVE_DIR || './target/fetcher/archive';
 const solrEndpoint = `http://${solrServer}/solr/tlrl/update`;
@@ -25,6 +26,16 @@ ensureDirectoryExists(archiveDir, (err) => {
   console.log(`Using ${archiveDir} as archive directory.`)
 });
 
+console.log(`-------------`);
+console.log(`Starting TLRL Fetcher with the following configs:
+FETCHER_KAFKA_BROKERS=${brokers}
+FETCHER_SOLR_SERVER=${solrServer}
+FETCHER_KAFKA_GROUPID=${groupId}
+FETCHER_LOG_LVL=${logLvl}
+FETCHER_ARCHIVE_DIR=${archiveDir}
+TIMEOUT=${timeout}
+-------------`);
+
 /* Setup Kafka */
 const kafka = new Kafka({
   logLevel: logLvl,
@@ -34,7 +45,7 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({
   groupId,
-  sessionTimeout: 90000
+  sessionTimeout: timeout
 });
 const producer = kafka.producer();
 const logger = kafka.logger();
