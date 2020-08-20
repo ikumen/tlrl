@@ -136,7 +136,7 @@ public class BookmarkController {
     return ResponseEntity.ok(ids);
   }
 
-  @GetMapping
+  @GetMapping("/facets")
   public ResponseEntity<Page<Bookmark>> findAll(@Valid BookmarkQueryFilter queryFilter, 
       @PageableDefault Pageable pageable, @AuthenticationPrincipal User user) {
     LOG.info("findAll: queryFilter={}", queryFilter);
@@ -144,22 +144,18 @@ public class BookmarkController {
     return ResponseEntity.ok(results);
   }
   
-  @GetMapping("/facets")
+  @GetMapping
   public ResponseEntity<BookmarkResults> findAllWithFacets(
       @Valid BookmarkQueryFilter queryFilter, 
       @PageableDefault Pageable pageable,
       @AuthenticationPrincipal User user) {
     LOG.info("findAllFacets: queryFilter={}", queryFilter);
-    if (queryFilter == null) {
-      System.out.println("facets was null");
-      queryFilter = new BookmarkQueryFilter();
-    }
     return ResponseEntity.ok(bookmarkService.findAllWithFacets(user, queryFilter, pageable));
   }
 
   @GetMapping(path = "/search")
   public ResponseEntity<BookmarkResults> searchAllWithFacets(
-      @RequestParam(name = "q", required = false, defaultValue = "") String terms,
+      @RequestParam(name = "terms", required = false, defaultValue = "") String terms,
       @Valid BookmarkQueryFilter queryFilter, @PageableDefault Pageable pageable, 
       @AuthenticationPrincipal User user) {
     LOG.info("Searching for: {}", terms);

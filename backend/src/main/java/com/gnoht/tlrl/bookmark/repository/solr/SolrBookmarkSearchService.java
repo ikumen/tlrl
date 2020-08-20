@@ -15,9 +15,7 @@ import static com.gnoht.tlrl.bookmark.repository.solr.SolrBookmarkDocument.WEB_U
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrClient;
@@ -27,11 +25,8 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.FacetParams;
-import org.apache.solr.common.params.SolrParams;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
@@ -44,7 +39,6 @@ import com.gnoht.tlrl.bookmark.Tag;
 import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
 import com.gnoht.tlrl.core.TlrlException;
 import com.gnoht.tlrl.search.SearchService;
-import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen@gnoht.com
