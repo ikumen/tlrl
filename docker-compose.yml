@@ -61,7 +61,7 @@ services:
       - DB_USER_PASSWORD=${DB_USER_PASSWORD:-tlrluser}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     volumes:
-      - "./config/db/postgresql/schema:/docker-entrypoint-initdb.d"
+      - "./config/db/postgres/schema:/docker-entrypoint-initdb.d"
       - "./target/postgres:/var/lib/postgresql/data"
     ports:
       - "5432:5432"
@@ -87,7 +87,7 @@ services:
     container_name: nginx
     restart: "no"
     volumes:
-      - "./config/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./config/nginx/nginx.development.conf:/etc/nginx/nginx.conf"
       - "${FETCHER_HOST_ARCHIVE_DIR:-./target/fetcher/archive}:/data/fetcher/archive"
     ports:
       - "9080:9080"
