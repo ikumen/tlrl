@@ -1,7 +1,13 @@
-# Base compose for all services required by TLRL. By default it's runs on the default network
-# named tlrl.
+# Compose all services required for running the TLRL application.
+#
+# Run TLRL application with embedded H2 instance:
+# > docker-compose up zookeeper kafka solr nginx fetcher app
+#
+# http://localhost:8080/ for direct access to application server
+# http://localhost:9080/ for reversed proxied version of the app
+#
 ---
-version: '3.7'
+version: '3.8'
 networks:
   default:
     external: false
@@ -69,18 +75,19 @@ services:
   fetcher:
     build:
       context: ./fetcher
-      args:
-        - FETCHER_ARCHIVE_DIR=${FETCHER_ARCHIVE_DIR:-/data/fetcher/archive}
     image: tlrl-fetcher
+    restart: on-failure
     container_name: tlrl-fetcher
+    entrypoint: ["./start-after.sh", "${KAFKA_BROKERS:-kafka:9092}", "tlrl-app:8080"]
     environment:
       - FETCHER_LOG_LVL=${FETCHER_LOG_LVL:-4}
       - FETCHER_KAFKA_BROKERS=${KAFKA_BROKERS:-kafka:9092}
       - FETCHER_SOLR_SERVER=${SOLR_SERVER:-solr:8983}
     volumes:
-      - "${FETCHER_HOST_ARCHIVE_DIR:-./target/fetcher/archive}:/data/fetcher/archive"
+      - "./target/archive:/data/archive"
     depends_on:
-      - 'kafka'
+      - kafka
+      - zookeeper
 
   nginx:
     image: nginx:alpine
@@ -88,7 +95,7 @@ services:
     restart: "no"
     volumes:
       - "./config/nginx/nginx.development.conf:/etc/nginx/nginx.conf"
-      - "${FETCHER_HOST_ARCHIVE_DIR:-./target/fetcher/archive}:/data/fetcher/archive"
+      - "./target/archive:/data/archive"
     ports:
       - "9080:9080"
 
@@ -96,17 +103,24 @@ services:
     build:
       context: .
       args:
-        - SKIP_TESTS=${SKIP_TESTS:-true}
-        - TARGET_DB=${TARGET_DB:-h2}
-        - SPRING_PROFILES=${SPRING_PROFILES:-dev}
+        - TLRL_SKIP_TESTS=true
+        - TLRL_TARGET_DB=${TLRL_TARGET_DB:-h2}
+        - TLRL_SPRING_PROFILES=${TLRL_SPRING_PROFILES:-dev}
     image: tlrl-app
     container_name: tlrl-app
     environment:
-      - TARGET_DB=${TARGET_DB:-h2}
-      - SPRING_PROFILES=${SPRING_PROFILES:-dev}
-      - KAFKA_BROKERS=${KAFKA_BROKERS:-kafka:9092}
-      - SOLR_SERVER=${SOLR_SERVER:-solr:8983}
+      - TLRL_TARGET_DB=${TLRL_TARGET_DB:-h2}
+      - TLRL_SPRING_PROFILES=${TLRL_SPRING_PROFILES:-dev}
+      - TLRL_KAFKA_BROKERS=${TLRL_KAFKA_BROKERS:-kafka:9092}
+      - TLRL_SOLR_SERVER=${TLRL_SOLR_SERVER:-solr:8983}
+      - TLRL_DB_NAME=${TLRL_DB_NAME:-tlrldb}
+      - TLRL_DB_USER=${TLRL_DB_USER:-tlrluser}
+      # postgres specific
+      - TLRL_DB_USER_PASSWORD=${DB_USER_PASSWORD:-tlrluser}
+      - TLRL_DB_SERVER_HOSTNAME=${TLRL_DB_SERVER_HOSTNAME:-localhost}
+      - TLRL_DB_SERVER_PORT=${TLRL_DB_SERVER_PORT:-5432}
+      - TLRL_DB_DDL_AUTO=${TLRL_DB_DDL_AUTO:-update}
     ports:
       - "8080:8080"
     depends_on:
-      - 'kafka'
+      - kafka
