@@ -1,9 +1,9 @@
 # --- Start build/compile 
 FROM openjdk:8-jdk-alpine as BUILD-STAGE
 
-ARG SPRING_PROFILES
-ARG TARGET_DB
-ARG SKIP_TESTS
+ARG TLRL_SPRING_PROFILES=${TLRL_SPRING_PROFILES}
+ARG TLRL_TARGET_DB=${TLRL_TARGET_DB}
+ARG TLRL_SKIP_TESTS=${TLRL_SKIP_TESTS}
 
 # Setup
 RUN apk add --update nodejs npm
@@ -17,21 +17,21 @@ RUN \
   npm install --prefix frontend \
     && npm run build --prefix frontend \
   # Build the backend
-  && SPRING_PROFILES_ACTIVE=${SPRING_PROFILES},${TARGET_DB} \
-    ./mvnw -f backend/pom.xml package -Dmaven.test.skip=${SKIP_TESTS} -Ddb=${TARGET_DB} \
+  && SPRING_PROFILES_ACTIVE=${TLRL_SPRING_PROFILES},${TLRL_TARGET_DB} \
+    ./mvnw -f backend/pom.xml package -Dmaven.test.skip=${TLRL_SKIP_TESTS} -Ddb=${TLRL_TARGET_DB} \
     && mv backend/target/tlrl-*-SNAPSHOT.jar backend/tlrl.jar \
   # Clean up
   && rm -rf frontend/node_modules \
-  && rm -rf backend/target
+  && rm -rf backend/target 
  
 # --- Start final image
 FROM openjdk:8-jre-alpine
 LABEL maintainer="ikumen@gnoht.com"
 
 RUN mkdir app
-COPY --from=BUILD-STAGE /tlrl/backend/tlrl.jar app/tlrl.jar
+COPY --from=BUILD-STAGE /tlrl/backend/tlrl.jar /app/tlrl.jar
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-Dspring.profiles.active=${SPRING_PROFILES},${TARGET_DB}", "-jar", "app/tlrl.jar" ]
+ENTRYPOINT [ "java", "-Dspring.profiles.active=${TLRL_SPRING_PROFILES},${TLRL_TARGET_DB}", "-jar", "/app/tlrl.jar" ]
 
 
