@@ -89,7 +89,9 @@ function Browser({logger, retriesOnFailure=4}) {
         },
         /** Close up the current context and page */
         close: async () => {
-          await browser.close();
+          if (browser) {
+            await browser.close();
+          }
         }
       });
     }), // end load()

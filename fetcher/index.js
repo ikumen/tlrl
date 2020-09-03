@@ -4,7 +4,7 @@
 const { Kafka, logLevel } = require('kafkajs');
 const { Indexer } = require('./indexer');
 const { Browser } = require('./browser');
-const { ensureDirectoryExists, makePath } = require('./helpers');
+const { ensureDirectoryExists, makePath, retry } = require('./helpers');
 
 // List of Kafka brokers to connect to
 const brokers = (process.env.FETCHER_KAFKA_BROKERS || 'localhost:9093').split(',');
@@ -40,13 +40,18 @@ TIMEOUT=${timeout}
 const kafka = new Kafka({
   logLevel: logLvl,
   clientId: 'fetcher',
-  brokers
+  brokers,
+  connectionTimeout: 20000,
+  retry: {
+    retries: 10
+  }
 });
 
 const consumer = kafka.consumer({
   groupId,
   sessionTimeout: timeout
 });
+const admin = kafka.admin();
 const producer = kafka.producer();
 const logger = kafka.logger();
 // Instance of puppeteer browser/page wrapper
@@ -100,7 +105,23 @@ const onDeletedBookmark = async ({bookmarks}) => {
   await indexer.delete(bookmarks);
 }
 
+const initializeTopics = async () => {
+  try {
+    await admin.connect();
+    await admin.createTopics({
+      topics: [
+        {topic: 'created'},
+        {topic: 'updated'},
+        {topic: 'deleted'}
+      ]
+    });
+  } finally {
+    await admin.disconnect();
+  }
+}
+
 const run = async ({baseDir}) => {
+  //initializeTopics();
   await consumer.connect();
   await producer.connect();
   await consumer.subscribe({
@@ -159,24 +180,21 @@ const run = async ({baseDir}) => {
   });
 }
 
-run({baseDir: archiveDir})
-.catch(err => {
-  logger.error(err);
-  if (browser) browser.close();
-  throw(err);
-});
+const errorTypes = ['unhandledRejection', 'uncaughtException'];
+const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
+const cleanUp = async () => {
+  await consumer.disconnect();
+  await producer.disconnect();
+}
 
-
-const errorTypes = ['unhandledRejection', 'uncaughtException']
-const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
 errorTypes.map(type => {
   process.on(type, async e => {
     try {
-      console.log(e)
-      await consumer.disconnect()
+      await cleanUp();
       process.exit(0)
-    } catch (_) {
+    } catch (err) {
+      console.log(err)
       process.exit(1)
     }
   })
@@ -185,12 +203,27 @@ errorTypes.map(type => {
 signalTraps.map(type => {
   process.once(type, async () => {
     try {
-      await consumer.disconnect()
+      await cleanUp();
     } finally {
       process.kill(process.pid, type)
     }
   })
 });
+
+
+retry(() => {
+  return run({baseDir: archiveDir})
+    .catch(err => {
+      await cleanUp();
+      return err;
+    });
+}, {retries: 3, delay: 30})
+.catch(err => {
+  console.log(err);
+  if (browser) browser.close();
+  throw(err);
+})
+
 
 
 

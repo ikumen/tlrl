@@ -16,10 +16,11 @@ const ensureDirectoryExists = (path, cb) => {
 const retry = (promise, {delay=5, retries=5}) => new Promise((resolve, reject) => {
   promise().then(resolve)
     .catch((err) => {
+      console.log(err);
       if (retries <= 0) {
         reject(err);
       } else {
-        //console.log(`----- retrying in ${(delay * 1000) / 1000} secs...`)
+        console.log(`Retrying in ${delay} secs...`)
         setTimeout(() => {
           resolve(retry(promise, {delay: delay*2, retries: retries-1}));
         }, delay * 1000);
