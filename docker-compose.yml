@@ -116,7 +116,7 @@ services:
       - TLRL_DB_NAME=${TLRL_DB_NAME:-tlrldb}
       - TLRL_DB_USER=${TLRL_DB_USER:-tlrluser}
       # postgres specific
-      - TLRL_DB_USER_PASSWORD=${DB_USER_PASSWORD:-tlrluser}
+      - TLRL_DB_USER_PASSWORD=${TLRL_DB_USER_PASSWORD:-tlrluser}
       - TLRL_DB_SERVER_HOSTNAME=${TLRL_DB_SERVER_HOSTNAME:-localhost}
       - TLRL_DB_SERVER_PORT=${TLRL_DB_SERVER_PORT:-5432}
       - TLRL_DB_DDL_AUTO=${TLRL_DB_DDL_AUTO:-update}
