@@ -4,6 +4,7 @@ FROM openjdk:8-jdk-alpine as BUILD-STAGE
 ARG TLRL_SPRING_PROFILES=${TLRL_SPRING_PROFILES}
 ARG TLRL_TARGET_DB=${TLRL_TARGET_DB}
 ARG TLRL_SKIP_TESTS=${TLRL_SKIP_TESTS}
+ARG POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 # Setup
 RUN apk add --update nodejs npm
@@ -16,6 +17,11 @@ RUN \
   # Build frontend and copy over to backend
   npm install --prefix frontend \
     && npm run build --prefix frontend \
+  && if [ "$TLRL_TARGET_DB" == "postgres" ]; then \
+        SPRING_PROFILES_ACTIVE=${TLRL_SPRING_PROFILES},${TLRL_TARGET_DB} \
+        FLYWAY_USER=postgres FLYWAY_PASSWORD=${POSTGRES_PASSWORD} ./mvnw -f backend/pom.xml \
+        flyway:migrate -Ddb=${TLRL_TARGET_DB} \
+    fi \ 
   # Build the backend
   && SPRING_PROFILES_ACTIVE=${TLRL_SPRING_PROFILES},${TLRL_TARGET_DB} \
     ./mvnw -f backend/pom.xml package -Dmaven.test.skip=${TLRL_SKIP_TESTS} -Ddb=${TLRL_TARGET_DB} \
