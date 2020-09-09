@@ -50,7 +50,7 @@ function AuthProvider({children}: PropsWithChildren<any>) {
      * Sign in the current user to the given provider.
      */
     signIn: (provider: string) => {
-      window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+      window.location.href = `/oauth2/authorization/${provider}`;
     },
     handleAuthError: (resp: Response) => {
       if (resp.status === 401 || resp.status === 403) {

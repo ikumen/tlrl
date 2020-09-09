@@ -18,6 +18,7 @@ spring:
   thymeleaf:
     cache: false
   security:
+    require-ssl: true
     oauth2:
       client:
         registration:
@@ -32,6 +33,14 @@ spring:
       WRITE_ENUMS_USING_TO_STRING: true
     deserialization:
       READ_ENUMS_USING_TO_STRING: true
+
+server:
+  forward-headers-strategy: FRAMEWORK
+  use-forward-headers: true
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
+    internal-proxies: ".*"
 
 app:
   kafka:
