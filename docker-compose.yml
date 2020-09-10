@@ -72,7 +72,7 @@ services:
     ports:
       - "5432:5432"
 
-  fetcher:
+  tlrl-fetcher:
     build:
       context: ./fetcher
     image: tlrl-fetcher
@@ -93,13 +93,16 @@ services:
     image: nginx:alpine
     container_name: nginx
     restart: "no"
+    environment: 
+      - TLRL_SERVER_PORT=8080
     volumes:
       - "./config/nginx/nginx.development.conf:/etc/nginx/nginx.conf"
+      - "./config/nginx/dev/tlrl.development.conf:/etc/nginx/templates/tlrl.development.conf.template"
       - "./target/archive:/data/archive"
     ports:
       - "9080:9080"
 
-  app:
+  tlrl-app:
     build:
       context: .
       args:
