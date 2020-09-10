@@ -1,6 +1,7 @@
 # TLRL 
 TLRL (_too long; read later_)&mdash;add, search and archive bookmarks. I use it to manage my bookmarks and to learn backend development, specifically on the [Spring](//spring.io)+[React](//reactjs.org) stack.
 
+<img src="docs/images/signin.png" width="280"> <img src="docs/images/all-bookmarks.png" width="280"> <img src="docs/images/editing.png" width="280">
 
 ### Start Here
 - [Project Overview](#project-overview) 
@@ -79,7 +80,7 @@ You'll need the following software:
 #### GitHub OAuth Config
 1. sign into GitHub and navigate to: https://docs.github.com/en/developers/apps/creating-an-oauth-app
 1. fill in anything for "Application Name", "Homepage URL" and "Application description"
-1. fill in `http://localhost:8080/login/oauth2/code/github` for "Authorization callback URL"
+1. fill in `http://localhost:9080/login/oauth2/code/github` for "Authorization callback URL"
 1. and "Register application"
 1. on the next screen, take note of the "Client ID" and "Client Secret", and continue below
 
@@ -89,8 +90,8 @@ You'll need the following software:
 1. select "OAuth client ID"
 1. on the next screen, select "Web application" for Application type
 1. fill in anything for "Name"
-1. add `http://localhost:8080` URI for "Authorized JavaScript origins"
-1. add `http://localhost:8080/login/oauth2/code/google` URI for "Authorized redirect URIs"
+1. add `http://localhost:9080` URI for "Authorized JavaScript origins"
+1. add `http://localhost:9080/login/oauth2/code/google` URI for "Authorized redirect URIs"
 1. and "Create", a "OAuth client created" dialog will pop up with your "Client ID" and "Client Secret", take note of it and continue below
 
 #### Storing OAuth Config
@@ -121,17 +122,11 @@ _Just remember to update the gitignore with your custom "local" file name, so it
 To run a demo of TLRL (assuming you've completed the requirements above), we use `docker-compose`
 to bring up the application and its dependent services. 
 
-First we start the dependent services:
 ```bash
-docker-compose up zookeeper solr kafka
+docker-compose up zookeeper solr kafka nginx tlrl-app tlrl-fetcher
 ```
-Next, in another terminal we start the `backend` application and `fetcher`. 
-```bash
-docker-compose up app fetcher 
-```
-_I don't know a good way to have the `backend`/`fetcher` applications wait for Kafka brokers to start, which is why we are starting them from a second terminal._ 
 
-The build for all the dependent services, `fetcher` and the `backend` application should take several minutes. If all goes well, point your browser to http://localhost:8080 to check out the application.
+The build for all the dependent services, `fetcher` and the `backend` application should take several minutes. If all goes well, point your browser to http://localhost:9080 to check out the application. _Note, http://localhost:9080 is actually the proxy to the underlying app at http://localhost:8080._
 
 ### Development Setup
 For development, you'll need to install `Nodejs/npm` in addition to the requirements above. I usually start the dependent services ...
@@ -151,7 +146,7 @@ npm install --prefix frontend && npm run build --prefix frontend
 SPRING_PROFILES_ACTIVE=dev,h2 ./mvnw -f backend/pom.xml spring-boot:run -Ddb=h2
 ```
 
-Point your browser to http://localhost:8080
+Point your browser to http://localhost:8080.
 
 
 
