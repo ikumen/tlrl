@@ -121,6 +121,14 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
   int updateSharedStatusByOwnerAndIdIn(SharedStatus status, User owner, List<Long> ids, LocalDateTime updatedDateTime);
 
   /**
+   * 
+   * @param ids
+   * @param archivedDateTime
+   * @return
+   */
+  int updateArchivedDateTimeByOwnerAndId(User owner, Long id, LocalDateTime archivedDateTime);
+  
+  /**
    * Deletes a {@link Bookmark} by id and {@link User}.
    *
    * @param id
@@ -138,4 +146,5 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
    */
   @Transactional
   int deleteByIdInAndOwner(List<Long> ids, User owner);
+  
 }

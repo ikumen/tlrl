@@ -11,11 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
-import com.gnoht.tlrl.bookmark.BookmarkService;
 import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
+import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
 
 /**
  * @author ikumen@gnoht.com
@@ -27,14 +28,14 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
 
   private final KafkaTemplate<String, List<Bookmark>> kafkaTemplate;
   private final KafkaBookmarkConfig kafkaBookmarkConfig;
-  private final BookmarkService bookmarkService;
+  private final BookmarkRepository bookmarkRepository;
 
   @Inject
   public KafkaBookmarkEventsHandler(
-      BookmarkService bookmarkService,
+      BookmarkRepository bookmarkRepository,
       @Qualifier("bookmarkKafkaTemplate") KafkaTemplate<String, List<Bookmark>> kafkaTemplate,
       KafkaBookmarkConfig kafkaBookmarkConfig) {
-    this.bookmarkService = bookmarkService;
+    this.bookmarkRepository = bookmarkRepository;
     this.kafkaTemplate = kafkaTemplate;
     this.kafkaBookmarkConfig = kafkaBookmarkConfig;
   }
@@ -42,6 +43,7 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
   /**
    * Handler for newly created {@link Bookmark}.
    */
+  @Async
   @Override
   public void onCreated(Bookmark bookmark) {
     LOG.debug("Producing created topic: {}", bookmark);
@@ -52,6 +54,7 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
   /**
    * Handler for recently updated {@link Bookmark}s
    */
+  @Async
   @Override
   public void onUpdated(List<Bookmark> bookmarks) {
     LOG.debug("Producing updated topic: {}", bookmarks);
@@ -62,6 +65,7 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
   /**
    * Handler for recently deleted {@link Bookmark}s.
    */
+  @Async
   @Override
   public void onDeleted(List<Bookmark> bookmarks) {
     LOG.debug("Producing deleted topic: {}", bookmarks);
@@ -72,6 +76,7 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
   /**
    * Handler for recently archived {@link Bookmark}s.
    */
+  @Async
   @KafkaListener(
       groupId = "#{kafkaBookmarkConfig.getGroupId()}",
       topics = "#{kafkaBookmarkConfig.getEventConfig().archived()}",
@@ -82,6 +87,7 @@ public class KafkaBookmarkEventsHandler implements BookmarkEventsHandler {
     //  onCreate -> fetcher -> onArchived -> update -> onUpdate -> fetcher
     // we can make onUpdate smarter to avoid calling fetcher again.
     LOG.debug("Consuming archived topic message: {}", bookmark);
-    bookmarkService.update(bookmark);
+    bookmarkRepository.updateArchivedDateTimeByOwnerAndId(bookmark.getOwner(), 
+        bookmark.getId(), bookmark.getArchivedDateTime());
   }
 }

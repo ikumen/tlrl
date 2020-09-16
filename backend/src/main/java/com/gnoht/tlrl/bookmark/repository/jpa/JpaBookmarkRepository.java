@@ -49,6 +49,18 @@ public interface JpaBookmarkRepository extends JpaRepository<Bookmark, Long>,
   int updateSharedStatusByOwnerAndIdIn(SharedStatus status, User owner, List<Long> ids, LocalDateTime updatedDateTime);
 
   /**
+   * 
+   * @param owner
+   * @param id
+   * @param archivedDateTime
+   * @return
+   */
+  @Transactional
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(value = "update Bookmark b set b.archivedDateTime = :archivedDateTime where b.owner = :owner and b.id = :id")
+  int updateArchivedDateTimeByOwnerAndId(User owner, Long id, LocalDateTime archivedDateTime);
+  
+  /**
    * Deletes a {@link Bookmark} by id and {@link User}.
    *
    * @param id

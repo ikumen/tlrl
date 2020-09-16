@@ -35,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gnoht.tlrl.bookmark.repository.jpa.JpaBookmarkListener;
 import com.gnoht.tlrl.core.Constants;
 import com.gnoht.tlrl.user.User;
 
@@ -43,7 +42,6 @@ import com.gnoht.tlrl.user.User;
  * @author ikumen@gnoht.com
  */
 @Entity
-@EntityListeners({JpaBookmarkListener.class})
 @Table(uniqueConstraints = {
   @UniqueConstraint(columnNames = {
     Bookmark.OWNER_ID_COL, Bookmark.WEB_URL_ID_COL

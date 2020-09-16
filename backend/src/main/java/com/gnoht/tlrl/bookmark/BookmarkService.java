@@ -3,8 +3,10 @@ package com.gnoht.tlrl.bookmark;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gnoht.tlrl.bookmark.events.BookmarkEventsHandler;
 import com.gnoht.tlrl.bookmark.repository.BookmarkQueryFilter;
 import com.gnoht.tlrl.bookmark.repository.BookmarkRepository;
 import com.gnoht.tlrl.bookmark.repository.WebUrlRepository;
@@ -38,13 +41,16 @@ public class BookmarkService {
   private BookmarkRepository bookmarkRepository;
   private WebUrlRepository webUrlRepository;
   private SearchService<BookmarkResults, BookmarkQueryFilter> searchService;
+  private BookmarkEventsHandler bookmarkEventsHandler;
 
   @Inject
   public BookmarkService(SearchService<BookmarkResults, BookmarkQueryFilter> searchService,
-      BookmarkRepository bookmarkRepository, WebUrlRepository webUrlRepository) {
+      BookmarkRepository bookmarkRepository, WebUrlRepository webUrlRepository,
+      BookmarkEventsHandler bookmarkEventsHandler) {
     this.searchService = searchService;
     this.bookmarkRepository = bookmarkRepository;
     this.webUrlRepository = webUrlRepository;
+    this.bookmarkEventsHandler = bookmarkEventsHandler;
   }
 
   /**
@@ -66,7 +72,9 @@ public class BookmarkService {
     webUrlRepository.findOneByUrl(bookmark.getWebUrl().getUrl())
         .ifPresent(builder::webUrl);
 
-    return bookmarkRepository.save(builder.build());
+    Bookmark created = bookmarkRepository.save(builder.build());
+    bookmarkEventsHandler.onCreated(created);
+    return created;
   }
 
   /**
@@ -92,6 +100,7 @@ public class BookmarkService {
 
     // Update the updatable properties
     setUpdatableProperties(partial, bookmark);
+    bookmarkEventsHandler.onUpdated(Arrays.asList(bookmark));
     return bookmark;
   }
 
@@ -114,6 +123,13 @@ public class BookmarkService {
       if (!results.get().getOwner().equals(owner))
         throw new NotAuthorizedException();
     }
+    
+    bookmarkEventsHandler.onDeleted(Arrays.asList(Bookmark
+      .builder()
+        .id(id)
+        .owner(owner)
+      .build())
+    );
   }
 
   /**
@@ -128,6 +144,13 @@ public class BookmarkService {
       throws BookmarkNotFoundException, NotAuthorizedException {
     int deletedCount = bookmarkRepository.deleteByIdInAndOwner(ids, owner);
     verifyAndHandleUpdatedCount(deletedCount, ids);
+    bookmarkEventsHandler.onDeleted(ids.stream()
+      .map(id -> Bookmark
+        .builder()
+          .id(id)
+          .owner(owner)
+        .build())
+      .collect(Collectors.toList()));
   }
 
   /**
@@ -144,6 +167,14 @@ public class BookmarkService {
     int updatedCount = bookmarkRepository.updateSharedStatusByOwnerAndIdIn(
         status, owner, ids, LocalDateTime.now(ZoneOffset.UTC));
     verifyAndHandleUpdatedCount(updatedCount, ids);
+    bookmarkEventsHandler.onUpdated(ids.stream()
+      .map(id -> Bookmark
+        .builder()
+          .id(id)
+          .owner(owner)
+          .sharedStatus(status)
+        .build())
+      .collect(Collectors.toList()));
   }
 
   /**
@@ -160,6 +191,14 @@ public class BookmarkService {
     int updatedCount = bookmarkRepository.updateReadStatusByOwnerAndIdIn(
         status, owner, ids, LocalDateTime.now(ZoneOffset.UTC));
     verifyAndHandleUpdatedCount(updatedCount, ids);
+    bookmarkEventsHandler.onUpdated(ids.stream()
+      .map(id -> Bookmark
+        .builder()
+          .id(id)
+          .owner(owner)
+          .readStatus(status)
+        .build())
+      .collect(Collectors.toList()));
   }
 
   /**
