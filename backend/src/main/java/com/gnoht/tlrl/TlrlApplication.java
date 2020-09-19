@@ -5,11 +5,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gnoht.tlrl.bookmark.converters.ReadStatusConverter;
@@ -24,6 +26,12 @@ public class TlrlApplication {
 
 	@Configuration
 	public class WebConfig implements WebMvcConfigurer {
+
+	  @Bean
+    public RestTemplate restTemplate() {
+	    return new RestTemplate();
+    }
+
     @Override
     public void addFormatters(FormatterRegistry registry) {
       registry.addConverter(new ReadStatusConverter());
@@ -45,6 +53,5 @@ public class TlrlApplication {
       executor.initialize();
       return executor;
     }
-	  
 	}
 }

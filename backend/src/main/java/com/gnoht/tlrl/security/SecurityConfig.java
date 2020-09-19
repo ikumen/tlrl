@@ -10,8 +10,8 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
-import com.gnoht.tlrl.security.oauth.OAuth2UserAdapterService;
-import com.gnoht.tlrl.security.oauth.OidcUserAdapterService;
+import com.gnoht.tlrl.security.oauth.DelegatingOAuth2UserService;
+import com.gnoht.tlrl.security.oauth.DelegatingOidcUserService;
 
 /**
  * 
@@ -29,10 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   public static final String SIGNUP_API_URL = BASE_API_URL + "/signup";
   
   @Autowired
-  private OAuth2UserAdapterService oauth2UserAdapterService;
+  private DelegatingOAuth2UserService oauth2UserAdapterService;
   
   @Autowired
-  private OidcUserAdapterService oidcUserAdapterService;
+  private DelegatingOidcUserService oidcUserAdapterService;
   
   @Bean
   public CsrfTokenRepository csrfTokenRepository() {

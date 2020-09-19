@@ -51,8 +51,13 @@ public class User implements Serializable {
   @Column(unique = true)
   private String name;
 
-  @Column(unique = true)
+  @JsonIgnore
+  @Column(nullable = false)
   private String email;
+
+  @JsonIgnore
+  @Column(nullable = false, unique = true)
+  private String oauthUserId;
 
   @JsonIgnore // we don't need roles exposed to client
   @ElementCollection(targetClass = Role.class)
@@ -66,8 +71,9 @@ public class User implements Serializable {
 
   User() {/* for JPA */}
 
-  public User(Long id, String name, String email) {
+  public User(Long id, String oauthUserId, String name, String email) {
     this.id = id;
+    this.oauthUserId = oauthUserId;
     this.name = name;
     this.email = email;
   }
@@ -75,12 +81,14 @@ public class User implements Serializable {
   @JsonCreator
   public User(
       @JsonProperty("id") Long id,
+      @JsonProperty("oauthUserId") String oauthUserId,
       @NotEmpty @NotNull @Size(min = 3, max = 255)
       @Pattern(regexp = "^[a-zA-Z0-9_]*$")
       @JsonProperty("name") String name,
       @JsonProperty("email") String email,
       @JsonProperty("roles") Set<Role> roles) {
     this.id = id;
+    this.oauthUserId = oauthUserId;
     this.name = name;
     this.email = email;
     this.roles = roles;
@@ -102,6 +110,10 @@ public class User implements Serializable {
     return roles;
   }
 
+  public String getOauthUserId() {
+    return oauthUserId;
+  }
+
   void setId(Long id) {
     this.id = id;
   }
@@ -114,6 +126,10 @@ public class User implements Serializable {
     this.email = email;
   }
 
+  void setOauthUserId(String oauthUserId) {
+    this.oauthUserId = oauthUserId;
+  }
+
   void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
@@ -124,7 +140,7 @@ public class User implements Serializable {
     if (o == null || !(o instanceof User)) return false;
     User user = (User) o;
     return (id != null && id.equals(user.getId()))
-        || (email != null && email.equals(user.email));
+        || (oauthUserId != null && oauthUserId.equals(user.oauthUserId));
   }
 
 
@@ -132,7 +148,7 @@ public class User implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((email == null) ? 0 : email.hashCode());
+    result = prime * result + ((oauthUserId == null) ? 0 : oauthUserId.hashCode());
     return result;
   }
   
@@ -141,8 +157,10 @@ public class User implements Serializable {
     return "User {" +
         "id=" + id +
         ", name='" + name + '\'' +
-        ", roles=" + roles + ", email=" + email +
-        '}';
+        ", oauthUserId='" + oauthUserId + '\'' +
+        ", roles=" + roles +
+        ", email='" + email + '\'' +
+      '}';
   }
 
   public static Builder builder() {
@@ -153,6 +171,7 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String email;
+    private String oauthUserId;
     private Set<Role> roles = new HashSet<>();
     private Builder() {}
 
@@ -165,6 +184,9 @@ public class User implements Serializable {
     public Builder email(String email) {
       this.email = email; return this;
     }
+    public Builder oauthUserId(String oauthUserId) {
+      this.oauthUserId = oauthUserId; return this;
+    }
     public Builder role(Role role) {
       this.roles.add(role); return this;
     }
@@ -172,7 +194,7 @@ public class User implements Serializable {
       this.roles = roles; return this;
     }
     public User build() {
-      return new User(id, name, email, roles);
+      return new User(id, oauthUserId, name, email, roles);
     }
   }
 }

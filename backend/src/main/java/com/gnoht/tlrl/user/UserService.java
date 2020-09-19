@@ -57,6 +57,15 @@ public class UserService {
   }
 
   /**
+   * Find and return {@link User} with the given oauthUserId.
+   * @param oauthUserId
+   * @return
+   */
+  public Optional<User> findByOauthUserId(String oauthUserId) {
+    return userRepository.findOneByOauthUserId(oauthUserId);
+  }
+
+  /**
    * Given a new user, assign them the {@link Role#ROLE_USER} and save the User
    * to the underlying data store.
    *

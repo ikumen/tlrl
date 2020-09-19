@@ -19,7 +19,7 @@ public class OAuth2UserAdapter extends User implements UserAdapter<OAuth2UserAda
   private final OAuth2User oauthUser;
   
   public OAuth2UserAdapter(User user, OAuth2User oauthUser) {
-    super(user.getId(), user.getName(), user.getEmail(), user.getRoles());
+    super(user.getId(), user.getOauthUserId(), user.getName(), user.getEmail(), user.getRoles());
     this.oauthUser = oauthUser;
   }
   

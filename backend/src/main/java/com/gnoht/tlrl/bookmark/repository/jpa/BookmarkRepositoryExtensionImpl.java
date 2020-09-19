@@ -133,7 +133,7 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
     JPAQuery<Bookmark> findAllQuery = baseFindAllQuery
         .select(Projections.constructor(Bookmark.class,
             _bookmark.id, 
-            Projections.constructor(User.class, _owner.id, _owner.name, _owner.email), 
+            Projections.constructor(User.class, _owner.id, _owner.oauthUserId, _owner.name, _owner.email),
             Projections.constructor(WebUrl.class, _webUrl.id, _webUrl.url, _webUrl.createdDateTime), 
             _bookmark.title, 
             _bookmark.description, 

@@ -21,7 +21,7 @@ public class OidcUserAdapter extends User implements UserAdapter<OidcUserAdapter
   private final OidcUser oidcUser;
   
   public OidcUserAdapter(User user, OidcUser oidcUser) {
-    super(user.getId(), user.getName(), user.getEmail(), user.getRoles());
+    super(user.getId(), user.getOauthUserId(), user.getName(), user.getEmail(), user.getRoles());
     this.oidcUser = oidcUser;
   }
 

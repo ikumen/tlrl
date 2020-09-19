@@ -78,6 +78,7 @@ public class SecurityController {
     LOG.info("Handling sign up: signUpUser={}, oauthUser={}", signUpUser, authUser);
     User createdUser =userService.signUp(User.builder()
         .role(Role.ROLE_USER)
+        .oauthUserId(authUser.getOauthUserId())
         .email(authUser.getEmail())
         .name(signUpUser.getName())
       .build());

@@ -24,6 +24,13 @@ public interface UserRepository extends Repository<User, Long> {
    */
   Optional<User> findOneByEmail(String email);
 
+  /**
+   * Find {@link User} by the given oauthUserId.
+   * @param oauthUserId
+   * @return
+   */
+  Optional<User> findOneByOauthUserId(String oauthUserId);
+
   boolean existsByName(String name);
 
   boolean existsByEmail(String email);
