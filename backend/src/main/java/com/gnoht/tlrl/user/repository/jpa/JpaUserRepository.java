@@ -22,5 +22,5 @@ public interface JpaUserRepository extends JpaRepository<User, Long>, UserReposi
 
   @Override
   @EntityGraph(value = "User.roles", type = EntityGraph.EntityGraphType.LOAD)
-  Optional<User> findOneByEmail(String email);
+  Optional<User> findOneByOauthUserId(String email);
 }

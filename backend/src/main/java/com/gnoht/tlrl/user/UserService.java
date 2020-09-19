@@ -37,16 +37,6 @@ public class UserService {
   }
 
   /**
-   * Find and return a {@link User} with the given email if they exist.
-   *
-   * @param email
-   * @return
-   */
-  public Optional<User> findByEmail(String email) {
-    return userRepository.findOneByEmail(email);
-  }
-
-  /**
    * Find and return a {@link User} with the given name if they exist.
    *
    * @param name

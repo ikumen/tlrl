@@ -18,13 +18,6 @@ public interface UserRepository extends Repository<User, Long> {
   Optional<User> findOneByName(String name);
 
   /**
-   * Find {@link User} by the given email.
-   * @param email
-   * @return
-   */
-  Optional<User> findOneByEmail(String email);
-
-  /**
    * Find {@link User} by the given oauthUserId.
    * @param oauthUserId
    * @return
@@ -33,5 +26,6 @@ public interface UserRepository extends Repository<User, Long> {
 
   boolean existsByName(String name);
 
-  boolean existsByEmail(String email);
+  boolean existsByOauthUserId(String oauthUserId);
+
 }
