@@ -20,7 +20,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.app_user (
     id bigint NOT NULL,
     email character varying(255),
-    name character varying(255)
+    name character varying(255),
+    oauth_user_id character varying(255) NOT NULL
 );
 ALTER TABLE public.app_user OWNER TO ${dbAdmin};
 
@@ -108,10 +109,10 @@ ALTER TABLE ONLY public.user_role
     ADD CONSTRAINT uk872xec3woupu3gw59b04pj3sa UNIQUE (user_id, role_id);
 
 --
--- User's email is a unique within our system
+-- User's oauth id is unique within our system
 --
 ALTER TABLE ONLY public.app_user
-    ADD CONSTRAINT uk_1j9d9a06i600gd43uu3km82jw UNIQUE (email);
+  ADD CONSTRAINT uk_hauf8ey208tip2iawxk03v8uq UNIQUE (oauth_user_id);
 
 --
 -- User name is unique within our system
