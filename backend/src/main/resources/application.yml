@@ -22,11 +22,16 @@ spring:
       client:
         registration:
           google:
-            client-id: 
-            client-secret: 
+            display: Google
+            client-id:
+            client-secret:
           github:
-            client-id: 
-            client-secret: 
+            display: GitHub
+            client-id:
+            client-secret:
+            scope: user
+            user-email-uri: https://api.github.com/user/emails
+            
   jackson:
     serialization:
       WRITE_ENUMS_USING_TO_STRING: true
@@ -116,4 +121,5 @@ spring:
       'ddl-auto': ${TLRL_DB_DDL_AUTO:none}
       default_schema: public
     properties:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
