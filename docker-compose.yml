@@ -60,11 +60,11 @@ services:
     container_name: postgres
     restart: "no"
     environment:
-      - DB_NAME=${DB_NAME:-tlrldb}
-      - DB_ADMIN=${DB_ADMIN:-tlrladmin}
-      - DB_USER=${DB_USER:-tlrluser}
-      - DB_ADMIN_PASSWORD=${DB_ADMIN_PASSWORD:-tlrladmin}
-      - DB_USER_PASSWORD=${DB_USER_PASSWORD:-tlrluser}
+      - TLRL_DB_NAME=${TLRL_DB_NAME:-tlrldb}
+      - TLRL_DB_ADMIN=${TLRL_DB_ADMIN:-tlrladmin}
+      - TLRL_DB_USER=${TLRL_DB_USER:-tlrluser}
+      - TLRL_DB_ADMIN_PASSWORD=${TLRL_DB_ADMIN_PASSWORD:-tlrladmin}
+      - TLRL_DB_USER_PASSWORD=${TLRL_DB_USER_PASSWORD:-tlrluser}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     volumes:
       - "./config/db/postgres/schema:/docker-entrypoint-initdb.d"

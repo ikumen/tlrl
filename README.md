@@ -123,7 +123,7 @@ To run a demo of TLRL (assuming you've completed the requirements above), we use
 to bring up the application and its dependent services. 
 
 ```bash
-docker-compose up zookeeper solr kafka nginx tlrl-app tlrl-fetcher
+docker-compose up zookeeper kafka solr nginx tlrl-app tlrl-fetcher
 ```
 
 The build for all the dependent services, `fetcher` and the `backend` application should take several minutes. If all goes well, point your browser to http://localhost:9080 to check out the application. _Note, http://localhost:9080 is actually the proxy to the underlying app at http://localhost:8080._
@@ -132,7 +132,7 @@ The build for all the dependent services, `fetcher` and the `backend` applicatio
 For development, you'll need to install `Nodejs/npm` in addition to the requirements above. I usually start the dependent services ...
 
 ```bash
-docker-compose up zookeeper solr kafka fetcher
+docker-compose up zookeeper kafka solr tlrl-fetcher
 ```
 
 then run the `backend` application manually as I'm developing.
@@ -147,6 +147,28 @@ SPRING_PROFILES_ACTIVE=dev,h2 ./mvnw -f backend/pom.xml spring-boot:run -Ddb=h2
 ```
 
 Point your browser to http://localhost:8080.
+
+#### Using PostgreSQL in development
+
+To run PostgreSQL in development vs the embedded H2, just run the included Docker image.
+
+```bash
+docker-compose up zookeeper kafka solr postgres tlrl-fetcher
+```
+
+Then run the [Flyway](https://flywaydb.org) migrations to create the schema.
+
+```bash
+FLYWAY_USER=postgres FLYWAY_PASSWORD=postgres ./mvnw -f backend/pom.xml flyway:migrate -Ddb=postgres
+```
+
+Next, run the `backend` application manually as before.
+
+```bash
+npm install --prefix frontend && npm run build --prefix frontend
+
+SPRING_PROFILES_ACTIVE=dev,postgres TLRL_DB_USER=tlrladmin TLRL_DB_USER_PASSWORD=tlrladmin TLRL_DB_SERVER_HOSTNAME=localhost TLRL_DB_SERVER_PORT=5432 TLRL_DB_NAME=tlrldb ./mvnw -f backend/pom.xml spring-boot:run -Ddb=postgres
+```
 
 
 

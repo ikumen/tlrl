@@ -32,7 +32,7 @@ public class BookmarkServiceTests {
   @Transactional(propagation = Propagation.NEVER)
   public void beforeEach() {
     if (user == null) {
-      user = userService.signUp(new User(null, "user1", "user1@acme.org", new HashSet<>()));
+      user = userService.signUp(new User(null,  null,"user1", "user1@acme.org", new HashSet<>()));
     }
   }
 
