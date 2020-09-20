@@ -61,10 +61,10 @@ public class BookmarkService {
    */
   @Transactional
   public Bookmark create(Bookmark bookmark) throws AlreadyExistsException {
-
+    User owner = bookmark.getOwner();
     WebUrl webUrl = bookmark.getWebUrl();
     // Check if we already have bookmark, else continue to save Bookmark
-    if (bookmarkRepository.existsByWebUrlUrlAndOwner(webUrl.getUrl(), bookmark.getOwner()))
+    if (bookmarkRepository.existsByWebUrlUrlAndOwner(webUrl.getUrl(), owner))
       throw new BookmarkAlreadyExistsException(bookmark);
 
     Bookmark.Builder builder = Bookmark.Builder.with(bookmark);
@@ -73,7 +73,13 @@ public class BookmarkService {
         .ifPresent(builder::webUrl);
 
     Bookmark created = bookmarkRepository.save(builder.build());
-    bookmarkEventsHandler.onCreated(created);
+    bookmarkEventsHandler.onCreated(Bookmark
+        .Builder.with(created)
+        .owner(User.builder()
+          .id(owner.getId())
+          .name(owner.getName())
+          .build())
+        .build());
     return created;
   }
 
@@ -92,15 +98,22 @@ public class BookmarkService {
     Bookmark bookmark = bookmarkRepository.findById(partial.getId())
         .orElseThrow(BookmarkNotFoundException::new);
 
+    User owner = bookmark.getOwner();
     // Make sure given user is the owner (e.g, partial.owner
     // should have been added and verified upstream.
-    LOG.debug("bookmark.owner={}, partial.owner={}", bookmark.getOwner(), partial.getOwner());
+    LOG.debug("bookmark.owner={}, partial.owner={}", owner, partial.getOwner());
     if (!bookmark.getOwner().equals(partial.getOwner()))
       throw new NotAuthorizedException();
 
     // Update the updatable properties
     setUpdatableProperties(partial, bookmark);
-    bookmarkEventsHandler.onUpdated(Arrays.asList(bookmark));
+    bookmarkEventsHandler.onUpdated(Arrays.asList(Bookmark.Builder
+      .with(partial)
+        .owner(User.builder()
+            .id(owner.getId())
+            .name(owner.getName())
+          .build())
+      .build()));
     return bookmark;
   }
 
@@ -127,7 +140,10 @@ public class BookmarkService {
     bookmarkEventsHandler.onDeleted(Arrays.asList(Bookmark
       .builder()
         .id(id)
-        .owner(owner)
+        .owner(User.builder()
+            .id(owner.getId())
+            .name(owner.getName())
+          .build())
       .build())
     );
   }
@@ -148,7 +164,10 @@ public class BookmarkService {
       .map(id -> Bookmark
         .builder()
           .id(id)
-          .owner(owner)
+          .owner(User.builder()
+              .id(owner.getId())
+              .name(owner.getName())
+            .build())
         .build())
       .collect(Collectors.toList()));
   }
@@ -171,7 +190,10 @@ public class BookmarkService {
       .map(id -> Bookmark
         .builder()
           .id(id)
-          .owner(owner)
+          .owner(User.builder()
+              .id(owner.getId())
+              .name(owner.getName())
+            .build())
           .sharedStatus(status)
         .build())
       .collect(Collectors.toList()));
@@ -195,7 +217,10 @@ public class BookmarkService {
       .map(id -> Bookmark
         .builder()
           .id(id)
-          .owner(owner)
+          .owner(User.builder()
+            .id(owner.getId())
+            .name(owner.getName())
+            .build())
           .readStatus(status)
         .build())
       .collect(Collectors.toList()));
@@ -204,7 +229,7 @@ public class BookmarkService {
   /**
    * 
    * @param user
-   * @param criteria
+   * @param queryFilter
    * @return
    */
   public BookmarkResults findAllWithFacets(User user, BookmarkQueryFilter queryFilter, Pageable pageable) {
@@ -215,7 +240,7 @@ public class BookmarkService {
   /**
    * 
    * @param user
-   * @param criteria
+   * @param queryFilter
    * @param pageable
    * @return
    */
