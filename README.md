@@ -1,9 +1,9 @@
 # TLRL 
 TLRL (_too long; read later_)&mdash;add, search and archive bookmarks. I use it to manage my bookmarks and to learn backend development, specifically on the [Spring](//spring.io)+[React](//reactjs.org) stack.
 
-<a href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/signin.png" target="_new"><img src="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/signin.png" width="280"></a> <a 
-  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/all-bookmarks.png" target="_new"><img src="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/all-bookmarks.png" width="280"></a> <a 
-  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/editing.png" target="_new"><img src="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/editing.png" width="280"></a>
+<a href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/signin.png" target="_new"><img src="docs/images/signin.png" width="280"></a> <a 
+  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/all-bookmarks.png" target="_new"><img src="docs/images/all-bookmarks.png" width="280"></a> <a 
+  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/editing.png" target="_new"><img src="docs/images/editing.png" width="280"></a>
 
 ### Start Here
 - [Project Overview](#project-overview) 
