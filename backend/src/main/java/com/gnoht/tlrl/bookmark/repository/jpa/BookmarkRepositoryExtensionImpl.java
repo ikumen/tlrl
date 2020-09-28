@@ -53,7 +53,7 @@ public class BookmarkRepositoryExtensionImpl implements BookmarkRepositoryExtens
     this.entityManager = entityManager;
     this.jpaQueryFactory = new JPAQueryFactory(entityManager);
   }
-  
+
   @Override
   public Page<Bookmark> findAll(BookmarkQueryFilter queryFilter, Pageable pageable) {    
     JPAQuery<Long> findAllQuery = createFindAllQuery(queryFilter);

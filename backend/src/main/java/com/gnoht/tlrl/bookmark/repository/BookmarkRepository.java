@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.gnoht.tlrl.bookmark.Bookmark;
 import com.gnoht.tlrl.bookmark.BookmarkFacets;
@@ -18,36 +17,33 @@ import com.gnoht.tlrl.bookmark.ReadStatus;
 import com.gnoht.tlrl.bookmark.SharedStatus;
 import com.gnoht.tlrl.bookmark.WebUrl;
 import com.gnoht.tlrl.core.repository.Repository;
-import com.gnoht.tlrl.core.repository.Specification;
 import com.gnoht.tlrl.user.User;
 
 /**
  * @author ikumen
  */
 public interface BookmarkRepository extends Repository<Bookmark, Long> {
-  
+
   /**
-   * Find all {@link Bookmark}s belonging to given {@link User}, filtered by the given {@link Specification}.
-   * 
-   * @param user
-   * @param specification
+   * Find all {@link Bookmark}s specified by given {@link BookmarkQueryFilter}.
+   *
+   * @param queryFilter
    * @param pageable
    * @return
    */
   Page<Bookmark> findAll(BookmarkQueryFilter queryFilter, Pageable pageable);
   
   /**
-   * 
-   * @param user
-   * @param specifications
+   * Find all {@link Bookmark}s and {@link BookmarkFacets} specified by given {@link BookmarkQueryFilter}.
+   * @param queryFilter
+   * @param pageable
    * @return
    */
   BookmarkResults findAllWithFacets(BookmarkQueryFilter queryFilter, Pageable pageable);
   
   /**
-   * 
-   * @param user
-   * @param specifications
+   * Find all {@link BookmarkFacets} specified by given {@link BookmarkQueryFilter}.
+   * @param queryFilter
    * @return
    */
   BookmarkFacets findAllFacets(BookmarkQueryFilter queryFilter);
@@ -121,8 +117,10 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
   int updateSharedStatusByOwnerAndIdIn(SharedStatus status, User owner, List<Long> ids, LocalDateTime updatedDateTime);
 
   /**
-   * 
-   * @param ids
+   * Update the 'archivedDateTime' for {@link Bookmark} with given id and owner.
+   *
+   * @param owner
+   * @param id
    * @param archivedDateTime
    * @return
    */
@@ -144,7 +142,6 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
    * @param owner
    * @return
    */
-  @Transactional
   int deleteByIdInAndOwner(List<Long> ids, User owner);
   
 }

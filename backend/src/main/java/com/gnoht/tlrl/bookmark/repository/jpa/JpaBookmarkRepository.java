@@ -59,29 +59,5 @@ public interface JpaBookmarkRepository extends JpaRepository<Bookmark, Long>,
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(value = "update Bookmark b set b.archivedDateTime = :archivedDateTime where b.owner = :owner and b.id = :id")
   int updateArchivedDateTimeByOwnerAndId(User owner, Long id, LocalDateTime archivedDateTime);
-  
-  /**
-   * Deletes a {@link Bookmark} by id and {@link User}.
-   *
-   * @param id
-   * @param owner
-   * @return
-   */
-  @Transactional
-  @Modifying(clearAutomatically = true, flushAutomatically = true)
-  @Query(value = "delete Bookmark b where b.id = :id and b.owner = :owner")
-  int deleteOneByIdAndOwner(Long id, User owner);
 
-  /**
-   * Deletes all {@link Bookmark}s in given list and owned by {@link User}.
-   *
-   * @param ids
-   * @param owner
-   * @return
-   */
-  @Transactional
-  @Modifying
-  @Query(value = "delete Bookmark b where b.owner = :owner and b.id in :ids")
-  int deleteByIdInAndOwner(List<Long> ids, User owner);
-  
 }

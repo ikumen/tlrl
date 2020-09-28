@@ -3,6 +3,7 @@ package com.gnoht.tlrl.bookmark;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -279,8 +280,12 @@ public class BookmarkService {
       to.setSharedStatus(from.getSharedStatus());
     if (from.getReadStatus() != null)
       to.setReadStatus(from.getReadStatus());
-    if (from.getTags() != null)
-      to.setTags(from.getTags());
+    if (from.getTags() != null) {
+      List<Tag> newTags = new ArrayList<>(from.getTags().size());
+      for (Tag tag: from.getTags())
+        newTags.add(new Tag(tag.getId()));
+      to.setTags(newTags);
+    }
     if (from.getArchivedDateTime() != null)
       to.setArchivedDateTime(from.getArchivedDateTime());
     to.setUpdatedDateTime(LocalDateTime.now(ZoneOffset.UTC));
