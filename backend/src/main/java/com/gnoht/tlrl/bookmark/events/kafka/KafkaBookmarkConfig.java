@@ -77,7 +77,7 @@ public class KafkaBookmarkConfig {
         .partitions(1).compact().build();
   }
 
-  @Bean(name = "createdTopic")
+  @Bean(name = "deletedTopic")
   public NewTopic newDeletedTopic(EventConfigProperties eventConfig) {
     return TopicBuilder.name(eventConfig.deleted())
         .partitions(1).compact().build();
