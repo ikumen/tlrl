@@ -10,6 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "kafkajs": "1.12.0",
-    "puppeteer": "3.1.0"
+    "puppeteer": "^5.3.1",
+    "puppeteer-extra": "^3.1.15",
+    "puppeteer-extra-plugin-stealth": "^2.6.2"
   }
 }
