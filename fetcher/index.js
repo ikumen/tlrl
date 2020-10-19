@@ -12,7 +12,7 @@ const groupId = process.env.FETCHER_KAFKA_GROUPID || 'tlrl-fetcher';
 const solrServer = process.env.FETCHER_SOLR_SERVER || 'localhost:8983';
 // NOTHING=0, ERROR=1, WARN=2, INFO=4, DEBUG=5
 const logLvl = process.env.FETCHER_LOG_LVL || logLevel.WARN; 
-const timeout = process.env.TIMEOUT || 10000;
+const timeout = process.env.TIMEOUT || 160000;
 // Where we should archive PDF and mhtml files to
 const archiveDir = process.env.FETCHER_ARCHIVE_DIR || './target/fetcher/archive';
 const solrEndpoint = `http://${solrServer}/solr/tlrl/update`;
