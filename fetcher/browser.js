@@ -24,7 +24,7 @@ const launchOptions = {
 };
 
 
-function Browser({logger, retriesOnFailure=4}) {
+function Browser({logger, retriesOnFailure=3}) {
 
   /**
    * Filters out (i.e, aborts) request for unsupported media types.
