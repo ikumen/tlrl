@@ -1,12 +1,12 @@
-# TLRL 
+# TLRL
 TLRL (_too long; read later_)&mdash;add, search and archive bookmarks. I use it to manage my bookmarks and to learn backend development, specifically on the [Spring](//spring.io)+[React](//reactjs.org) stack.
 
-<a href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/signin.png" target="_new"><img src="docs/images/signin.png" width="280"></a> <a 
-  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/all-bookmarks.png" target="_new"><img src="docs/images/all-bookmarks.png" width="280"></a> <a 
-  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/editing.png" target="_new"><img src="docs/images/editing.png" width="280"></a>
+<a href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/signin.png" target="_new"><img src="docs/images/signin.png" width="240"></a> <a
+  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/all-bookmarks.png" target="_new"><img src="docs/images/all-bookmarks.png" width="240"></a> <a
+  href="//raw.githubusercontent.com/ikumen/tlrl/master/docs/images/editing.png" target="_new"><img src="docs/images/editing.png" width="240"></a>
 
 ### Start Here
-- [Project Overview](#project-overview) 
+- [Project Overview](#project-overview)
 - Quick start
   - [Requirements](#requirements)
   - [Running TLRL](#running-tlrl)
@@ -20,23 +20,25 @@ Here's a quick overview of the application architecture, project structure and c
 A high level view of the overall architecture.
 
 ```
-                +-------------------------------------------+
-                |                   TLRL                    |
-                | +-------------+           +-------------+ |
-                | | Spring App  |           |  PostgreSQL | |
-            +----------------+ <------------->            | |
-            |  web client    |  |           +-------------+ | 
-            |                |  | +-------+                 |   +-----+
-            +------------^---+  | |       |  +------------+ |   | +-----+
-                | |      |      | | Kafka |  | Fetcher   <------->| www |
-+-------------+ | | +----v---+ <--->     <---->           | |   | |     |    
-| bookmarklet <----->        |  | |       |  +------^-----+ |   +-|     |
-+-------------+ | | |        |  | +-------+         |       |     +-----+
-                | | |  API   |  |            +------v-----+ |
-                | | |        | <-------------->           | |
-                | | +--------+  |            | Solr       | |
-                | +-------------+            +------------+ |
-                +-------------------------------------------+             
+                |                                                  |
+                |                   TLRL                           |
+                |   +-------------+               +-------------+  |
+                |   | Spring App  |               |  PostgreSQL |  |
+          +-------------+       <-^---------------^->           |  |
+          |    React    |         |               +-------------+  |
+          |   Web App   |-+       |   +-------+                    |    +-----+
+          +-------------+ |       |   |       |   +------------+   |    |  +--+--+
+                |   | +---V--+    |   | Kafka |   | Fetcher  <=^===^====|  | www |
++-------------+ |   | |      |  <-^---^->   <-^---^->          |   |    +--|     |
+| Bookmarklet |-^---^-^->    |    |   |       |   +------+-----+   |       +-----+
++-------------+ |   | |  API |    |   +-------+          |         |
+                |   | |      |    |               +------v-----+   |
+                |   | |      |  <-^---------------^->  Solr    |   |
+                |   | +------+    |               |   Search   |   |
+                |   +-------------+               +------------+   |
+                |                                                  |
+                |                                                  |
+
 ```
 The system consist of the following components:
 - [Spring Boot](https://spring.io/projects/spring-boot) application that serves:
@@ -67,9 +69,9 @@ The project structure is a [monorepo](https://en.wikipedia.org/wiki/Monorepo), w
 - `fetcher` project code for the Fetcher app, it runs standalone and organized as:
   - `index.js` main application entry point
   - `indexer.js` wrapper for Solr JSON api
-  - `browser.js` wrapper for puppeteer 
+  - `browser.js` wrapper for puppeteer
 - `solr` configuration files for Solr search engine
- 
+
 ## Quick Start
 The quick start instructions are for running a demo of the application or getting started with development. In either case you'll need to fork/clone the project: https://github.com/ikumen/tlrl.git and the following requirements.
 
@@ -97,7 +99,7 @@ You'll need the following software:
 1. and "Create", a "OAuth client created" dialog will pop up with your "Client ID" and "Client Secret", take note of it and continue below
 
 #### Storing OAuth Config
-Once you have the "Client ID" and "Client Secret", create a local `properties` file to store the secrets and make sure it doesn't get checked into source control. 
+Once you have the "Client ID" and "Client Secret", create a local `properties` file to store the secrets and make sure it doesn't get checked into source control.
 
 Create the file at `backend/src/main/resources/application-local.yml` and add the following:
 
@@ -118,11 +120,11 @@ Technically you can name `application-local.yml` anything, but I've already conf
   - `.gitignore` is already configured to ignore `application-local.yml`
   - `backend/src/main/resources/application.yml` is already configured to pull in the `local` profile
 
-_Just remember to update the gitignore with your custom "local" file name, so it doesn't accidentally get committed._  
+_Just remember to update the gitignore with your custom "local" file name, so it doesn't accidentally get committed._
 
 ### Running TLRL
 To run a demo of TLRL (assuming you've completed the requirements above), we use `docker-compose`
-to bring up the application and its dependent services. 
+to bring up the application and its dependent services.
 
 ```bash
 docker-compose up zookeeper kafka solr nginx tlrl-app tlrl-fetcher
@@ -141,7 +143,7 @@ then run the `backend` application manually as I'm developing.
 
 ```bash
 # Install the frontend dependencies and build it (which copies it over to backend application for deployment)
-npm install --prefix frontend && npm run build --prefix frontend  
+npm install --prefix frontend && npm run build --prefix frontend
 ```
 ```bash
 # Run the backend application
