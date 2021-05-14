@@ -20,26 +20,24 @@ Here's a quick overview of the application architecture, project structure and c
 A high level view of the overall architecture.
 
 ```
-                |                                                  |
-                |                   TLRL                           |
-                |   +-------------+               +-------------+  |
-                |   | Spring App  |               |  PostgreSQL |  |
-          +-------------+       <-^---------------^->           |  |
-          |    React    |         |               +-------------+  |
-          |   Web App   |-+       |   +-------+                    |    +-----+
-          +-------------+ |       |   |       |   +------------+   |    |  +--+--+
-                |   | +---V--+    |   | Kafka |   | Fetcher  <=^===^====|  | www |
-+-------------+ |   | |      |  <-^---^->   <-^---^->          |   |    +--|     |
-| Bookmarklet |-^---^-^->    |    |   |       |   +------+-----+   |       +-----+
-+-------------+ |   | |  API |    |   +-------+          |         |
-                |   | |      |    |               +------v-----+   |
-                |   | |      |  <-^---------------^->  Solr    |   |
-                |   | +------+    |               |   Search   |   |
-                |   +-------------+               +------------+   |
-                |                                                  |
-                |                                                  |
-
+                │                   TLRL                           │
+                │   ┌─────────────┐               ┌─────────────┐  │
+                │   │ Spring App  │               │  PostgreSQL │  │
+          ┌─────┴───┴───┐         │<─────────────>│             │  │
+          │    React    │         │               └─────────────┘  │
+          │   Web App   │─┐       │   ┌───────┐                    │    ┌─────┐
+          └─────┬───────┘ |       │   │       │   ┌────────────┐   │    │  ┌──┴──┐
+                │   │ ┌───V──┐    │   │ Kafka │   │ Fetcher  <─┼───┼────│  │ www │
+┌─────────────┐ │   │ │      │    │<──┼─>   <─┼──>│            │   │    └──│     │
+│ Bookmarklet │─┼───┼─┼─>    │    │   │       │   └──────┬─────┘   │       └─────┘
+└─────────────┘ │   │ │  API │    │   └───────┘          |         │
+                │   │ │      │    │               ┌──────v─────┐   │
+                │   │ │      │    │<─────────────>│    Solr    │   │
+                │   │ └──────┘    │               │   Search   │   │
+                │   └─────────────┘               └────────────┘   │
+                │                                                  │
 ```
+
 The system consist of the following components:
 - [Spring Boot](https://spring.io/projects/spring-boot) application that serves:
   - API for clients for managing bookmarks
